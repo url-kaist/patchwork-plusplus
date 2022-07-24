@@ -1,0 +1,6 @@
+.vscode/
+
+build/
+
+examples/cpp/demo_visualize
+examples/cpp/demo_sequential
