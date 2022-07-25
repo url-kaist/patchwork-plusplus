@@ -85,3 +85,8 @@ If you execute Patchwork++ with given demo codes well, you can get the following
 It is a ground segmentation result of data/000000.bin file using Open3D visualization. (Ground : Green, Nonground : Red)
 
 ![Open3D Visualization of "data/000000.bin"](pictures/demo_000000.png)
+
+## :mailbox: Contact Information
+If you have any questions, please do not hesitate to contact us
+* Seungjae Lee :envelope: `sj98lee at kaist.ac.kr`
+* Hyungtae Lim :envelope: `shapelim at kaist.ac.kr`
