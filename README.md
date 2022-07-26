@@ -89,7 +89,7 @@ It is a ground segmentation result of data/000000.bin file using Open3D visualiz
 ![Open3D Visualization of "data/000000.bin"](pictures/demo_000000.png)
 
 ## Citation
-If you use our codes, it would be great if you cite our paper ([arXiv][arXivLink])
+If you use our codes, please cite our paper ([arXiv][arXivLink])
 ```
 @inproceedings{lee2022patchworkpp,
     title={{Patchwork++: Fast and robust ground segmentation solving partial under-segmentation using 3D point cloud}},
@@ -100,8 +100,10 @@ If you use our codes, it would be great if you cite our paper ([arXiv][arXivLink
 }
 ```
 
-
 ## :mailbox: Contact Information
 If you have any questions, please do not hesitate to contact us
-* Seungjae Lee :envelope: `sj98lee at kaist.ac.kr`
-* Hyungtae Lim :envelope: `shapelim at kaist.ac.kr`
+* [Seungjae Lee][sjlink] :envelope: `sj98lee at kaist.ac.kr`
+* [Hyungtae Lim][htlink] :envelope: `shapelim at kaist.ac.kr`
+
+[sjlink]: https://github.com/seungjae24
+[htlink]: https://github.com/LimHyungTae
