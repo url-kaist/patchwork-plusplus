@@ -22,6 +22,10 @@
 * Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
 * Examples codes, which visualizes a ground segmentation result by Patchwork++ ([examples][examplelink]) :thumbsup:
 
+> If you are familiar with ROS, you can also visit [here][roslink] and try executing ROS-based Patchwork++!
+
+[roslink]: https://github.com/url-kaist/patchwork-plusplus-ros
+
 [sourcecodelink]: https://github.com/seungjae24/pypatchwork/tree/master/patchworkpp
 [pybind11link]: https://github.com/pybind/pybind11
 [wraplink]: https://github.com/seungjae24/pypatchwork/tree/master/python_wrapper
