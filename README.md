@@ -7,9 +7,11 @@
 <p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
 
 * An extension of [Patchwork][patchworklink] (RA-L'21 with IROS'21).
-* Validated on [SemanticKITTI][SemanticKITTIlink] dataset. Please refer the paper for detailed results!
-    * The ground segmentation benchmark source code is available on [here][benchmarklink].
+* Please refer our [paper][arXivlink] for detailed explanantions and experimental results!
 
+   * Validated on [SemanticKITTI][SemanticKITTIlink] dataset. The benchmark code is available on [here][benchmarklink].
+
+[arXivlink]: https://arxiv.org/abs/2207.11919
 [patchworklink]: https://github.com/LimHyungTae/patchwork
 [SemanticKITTIlink]: http://www.semantic-kitti.org/
 [benchmarklink]: https://github.com/url-kaist/Ground-Segmentation-Benchmark
@@ -85,6 +87,19 @@ If you execute Patchwork++ with given demo codes well, you can get the following
 It is a ground segmentation result of data/000000.bin file using Open3D visualization. (Ground : Green, Nonground : Red)
 
 ![Open3D Visualization of "data/000000.bin"](pictures/demo_000000.png)
+
+## Citation
+If you use our codes, it would be great if you cite our paper ([arXiv][arXivLink])
+```
+@inproceedings{lee2022patchworkpp,
+    title={{Patchwork++: Fast and robust ground segmentation solving partial under-segmentation using 3D point cloud}},
+    author={Lee, Seungjae and Lim, Hyungtae and Myung, Hyun},
+    booktitle={Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst.},
+    year={2022},
+    note={{Submitted}} 
+}
+```
+
 
 ## :mailbox: Contact Information
 If you have any questions, please do not hesitate to contact us
