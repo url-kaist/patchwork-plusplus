@@ -73,7 +73,7 @@ struct Params
     Params() {
         verbose     = false;
         enable_RNR  = false;
-        enable_RVPF = false;
+        enable_RVPF = true;
         enable_TGR  = true;
 
         num_iter = 3;
@@ -166,7 +166,6 @@ private:
     std::vector<double> update_elevation_[4];
 
     double d_;
-    double th_dist_d_;
 
     Eigen::VectorXf normal_;
     Eigen::VectorXf singular_values_;
@@ -200,6 +199,7 @@ private:
                                 std::vector<double> ring_flatness, std::vector<patchwork::RevertCandidate> candidates,
                                 int concentric_idx);
     
+    double calc_point_to_plane_d(PointXYZ p, Eigen::VectorXf normal, double d);
     void calc_mean_stdev(std::vector<double> vec, double &mean, double &stdev);
 
     void update_elevation_thr();

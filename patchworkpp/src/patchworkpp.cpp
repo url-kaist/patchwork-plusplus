@@ -73,9 +73,6 @@ void PatchWorkpp::estimate_plane(const vector<PointXYZ> &ground, double th_dist)
 
     // according to normal.T*[x,y,z] = -d
     d_ = -(normal_.transpose() * seeds_mean)(0, 0);
-    
-    // set distance threshold to `th_dist - d`
-    th_dist_d_ = th_dist - d_;
 }
 
 void PatchWorkpp::extract_initial_seeds(
@@ -495,62 +492,52 @@ void PatchWorkpp::extract_piecewiseground(
             extract_initial_seeds(zone_idx, src_wo_verticals, ground_pc_, params_.th_seeds_v);
             estimate_plane(ground_pc_, params_.th_dist_v);
 
-            if (zone_idx == 0 && normal_(2) < params_.uprightness_thr-0.1)
+            if (zone_idx == 0 && normal_(2) < params_.uprightness_thr)
             {
-                Eigen::MatrixXf points(src_wo_verticals.size(), 3);
-                int j = 0;
-                for (auto &p:src_wo_verticals) {
-                    points.row(j++) << p.x, p.y, p.z;
-                }
-                // ground plane model
-                Eigen::VectorXf result = points * normal_;
+                for ( int r=0; r<nonground_idx.size(); r++ ) {
+                    if (!nonground_idx[r]) {
 
-                for (int r = 0; r < result.rows(); r++) {
-                    if (result[r] < params_.th_dist - d_ && result[r] > -params_.th_dist - d_) {
-                        // non_ground_dst.push_back(src_tmp[r]);
-                        nonground_idx[r] == true;
-                    }
+                        double distance = calc_point_to_plane_d(src[r], normal_, d_);
+                        
+                        if ( abs(distance) < params_.th_dist_v ) {
+                            nonground_idx[r] == true;
+                            non_ground_dst.push_back(src[r]);
+                        }
+                    }   
                 }
             }
             else break;
         }
     }
 
+    // 2. Region-wise Ground Plane Fitting (R-GPF)
+    // : fits the ground plane
     vector<PointXYZ> src_wo_nongrounds;
     for ( int r=0; r<nonground_idx.size(); r++ )
     {
         if (!nonground_idx[r]) src_wo_nongrounds.push_back(src[r]);
     }
 
-    // pointcloud to matrix
-    Eigen::MatrixXf points(src_wo_nongrounds.size(), 3);
-    int j = 0;
-    for (auto &p:src_wo_nongrounds) {
-        points.row(j++) << p.x, p.y, p.z;
-    }
-
     extract_initial_seeds(zone_idx, src_wo_nongrounds, ground_pc_);
     estimate_plane(ground_pc_, params_.th_dist);
 
-    // 2. Region-wise Ground Plane Fitting (R-GPF)
-    // : fits the ground plane
     for (int i = 0; i < params_.num_iter; i++) {
 
         ground_pc_.clear();        
 
-        // ground plane model
-        Eigen::VectorXf result = points * normal_;
-        // threshold filter
-        for (int r = 0; r < result.rows(); r++) {
+        for ( auto point : src_wo_nongrounds ) {
+            
+            double distance = calc_point_to_plane_d(point, normal_, d_);
+            
             if (i < params_.num_iter - 1) {
-                if (result[r] < th_dist_d_ ) {// && result[r] > - params_.th_dist - d_) {
-                    ground_pc_.push_back(src_wo_nongrounds[r]);
+                if ( distance < params_.th_dist ) {
+                    ground_pc_.push_back(point);
                 }
-            } else { // Final stage
-                if (result[r] < th_dist_d_ ) {
-                    dst.push_back(src_wo_nongrounds[r]);
+            } else {
+                if ( distance < params_.th_dist ) {
+                    dst.push_back(point);
                 } else {
-                    non_ground_dst.push_back(src_wo_nongrounds[r]);
+                    non_ground_dst.push_back(point);
                 }
             }
         }
@@ -562,7 +549,15 @@ void PatchWorkpp::extract_piecewiseground(
             estimate_plane(dst, params_.th_dist);
         }
     }
+
+    assert( dst.size() + non_ground_dst.size() == src.size()  );
 }
+
+double PatchWorkpp::calc_point_to_plane_d(PointXYZ p, Eigen::VectorXf normal, double d)
+{
+    return normal(0)*p.x+normal(1)*p.y+normal(2)*p.z+d;
+}
+
 
 void PatchWorkpp::calc_mean_stdev(std::vector<double> vec, double &mean, double &stdev)
 {
