@@ -104,6 +104,18 @@ If you use our codes, please cite our paper ([arXiv][arXivLink])
 }
 ```
 
+In addition, you can also check the paper of our baseline(Patchwork) [here][patchworkarXivlink].
+```
+@article{lim2021patchwork,
+    title={Patchwork: Concentric Zone-based Region-wise Ground Segmentation with Ground Likelihood Estimation Using a 3D LiDAR Sensor},
+    author={Lim, Hyungtae and Minho, Oh and Myung, Hyun},
+    journal={IEEE Robotics and Automation Letters},
+    year={2021}
+}
+```
+[patchworkarXivlink]: https://arxiv.org/abs/2108.05560
+
+
 ## :mailbox: Contact Information
 If you have any questions, please do not hesitate to contact us
 * [Seungjae Lee][sjlink] :envelope: `sj98lee at kaist.ac.kr`
