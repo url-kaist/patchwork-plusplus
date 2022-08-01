@@ -156,7 +156,7 @@ void PatchWorkpp::estimateGround(Eigen::MatrixX3f cloud_in) {
     clock_t beg = clock();
     
     // 1. Reflected Noise Removal (RNR)
-    if (!params_.enable_RNR) reflected_noise_removal(cloud_in, cloud_nonground_);
+    if (params_.enable_RNR) reflected_noise_removal(cloud_in, cloud_nonground_);
 
     clock_t t1 = clock();
 
