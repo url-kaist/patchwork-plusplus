@@ -26,10 +26,10 @@
 
 [roslink]: https://github.com/url-kaist/patchwork-plusplus-ros
 
-[sourcecodelink]: https://github.com/seungjae24/pypatchwork/tree/master/patchworkpp
+[sourcecodelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/patchworkpp
 [pybind11link]: https://github.com/pybind/pybind11
-[wraplink]: https://github.com/seungjae24/pypatchwork/tree/master/python_wrapper
-[examplelink]: https://github.com/seungjae24/pypatchwork/tree/master/examples
+[wraplink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/python_wrapper
+[examplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/examples
 
 ## :package: Prerequisite packages
 > You may need to install Eigen, numpy, and Open3D. Open3D is used for point cloud visualization.
