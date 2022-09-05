@@ -11,7 +11,7 @@ std::string file_dir = std::string(__FILE__);
 std::string data_dir = file_dir.substr(0, file_dir.size()-filename_length) + "../../data/";
 std::string input_cloud_filepath = data_dir + "000000.bin";
 
-void read_bin(std::string bin_path, Eigen::MatrixX3f &cloud)
+void read_bin(std::string bin_path, Eigen::MatrixXf &cloud)
 {
   FILE *file = fopen(bin_path.c_str(), "rb");
   if (!file) {
@@ -22,21 +22,21 @@ void read_bin(std::string bin_path, Eigen::MatrixX3f &cloud)
   std::vector<float> buffer(1000000);
   size_t num_points = fread(reinterpret_cast<char *>(buffer.data()), sizeof(float), buffer.size(), file) / 4;
 
-  cloud.resize(num_points, 3);
+  cloud.resize(num_points, 4);
   for (int i=0; i<num_points; i++)
   {
-      cloud.row(i) << buffer[i*4], buffer[i*4+1], buffer[i*4+2];
+    cloud.row(i) << buffer[i*4], buffer[i*4+1], buffer[i*4+2], buffer[i*4+3];
   }
 }
 
-void eigen2geo(Eigen::MatrixX3f add, std::shared_ptr<geometry::PointCloud> geo)
+void eigen2geo(Eigen::MatrixXf add, std::shared_ptr<geometry::PointCloud> geo)
 {
   for ( int i=0; i<add.rows(); i++ ) {
     geo->points_.push_back(Eigen::Vector3d(add.row(i)(0), add.row(i)(1), add.row(i)(2)));
   }
 }
 
-void addNormals(Eigen::MatrixX3f normals, std::shared_ptr<geometry::PointCloud> geo)
+void addNormals(Eigen::MatrixXf normals, std::shared_ptr<geometry::PointCloud> geo)
 {
   for (int i=0; i<normals.rows(); i++) {
     geo->normals_.push_back(Eigen::Vector3d(normals.row(i)(0), normals.row(i)(1), normals.row(i)(2)));
@@ -55,7 +55,7 @@ int main() {
   patchwork::PatchWorkpp Patchworkpp(patchwork_parameters);
 
   // Load point cloud
-  Eigen::MatrixX3f cloud;
+  Eigen::MatrixXf cloud;
   read_bin(input_cloud_filepath, cloud);
 
   // Estimate Ground

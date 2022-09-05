@@ -18,13 +18,8 @@ except ImportError:
 def read_bin(bin_path):
     scan = np.fromfile(bin_path, dtype=np.float32)
     scan = scan.reshape((-1, 4))
-    ptcloud_xyz = scan[:, :-1]
 
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(ptcloud_xyz)
-
-    xyz = np.asarray(pcd.points)
-    return xyz
+    return scan
 
 if __name__ == "__main__":
 
@@ -61,7 +56,7 @@ if __name__ == "__main__":
         print("\tESC : close the Open3D window")
         
         vis = o3d.visualization.VisualizerWithKeyCallback()
-        vis.create_window()
+        vis.create_window(width = 600, height = 400)
 
         mesh = o3d.geometry.TriangleMesh.create_coordinate_frame()
 
