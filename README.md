@@ -11,6 +11,9 @@
 
    * Validated on [SemanticKITTI][SemanticKITTIlink] dataset. The benchmark code is available on [here][benchmarklink].
 
+* :bulb: Contents: [YouTube][YouTubeLink]
+
+[YouTubeLInk]: https://www.youtube.com/watch?v=fogCM159GRk
 [arXivlink]: https://arxiv.org/abs/2207.11919
 [patchworklink]: https://github.com/LimHyungTae/patchwork
 [SemanticKITTIlink]: http://www.semantic-kitti.org/
