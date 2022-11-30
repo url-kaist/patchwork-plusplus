@@ -17,8 +17,10 @@ struct PointXYZ {
     float x;
     float y;
     float z;
+    float intensity;
 
     PointXYZ(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+    PointXYZ(float _x, float _y, float _z, float _intensity) : x(_x), y(_y), z(_z), intensity(_intensity) {}
 };
 
 struct RevertCandidate 
@@ -149,8 +151,8 @@ public:
     double getHeight() { return params_.sensor_height; }
     double getTimeTaken() { return time_taken_; }
 
-    Eigen::MatrixX3f getGround() { return toEigenCloud(cloud_ground_); }
-    Eigen::MatrixX3f getNonground() { return toEigenCloud(cloud_nonground_); }
+    Eigen::MatrixX4f getGround() { return toEigenX4f(cloud_ground_); }
+    Eigen::MatrixX4f getNonground() { return toEigenX4f(cloud_nonground_); }
     
     Eigen::MatrixX3f getCenters() { return toEigenCloud(centers_); }
     Eigen::MatrixX3f getNormals() { return toEigenCloud(normals_); }
@@ -188,6 +190,7 @@ private:
     vector<PointXYZ> centers_, normals_;
 
     Eigen::MatrixX3f toEigenCloud(vector<PointXYZ> cloud);
+    Eigen::MatrixX4f toEigenX4f(vector<PointXYZ> cloud);
 
     void addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add);
     

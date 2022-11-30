@@ -64,8 +64,8 @@ int main() {
     Patchworkpp.estimateGround(cloud);
     
     // Get Ground and Nonground
-    Eigen::MatrixX3f ground     = Patchworkpp.getGround();
-    Eigen::MatrixX3f nonground  = Patchworkpp.getNonground();
+    Eigen::MatrixX4f ground     = Patchworkpp.getGround();
+    Eigen::MatrixX4f nonground  = Patchworkpp.getNonground();
     double time_taken = Patchworkpp.getTimeTaken();
 
     // Get centers and normals for patches
