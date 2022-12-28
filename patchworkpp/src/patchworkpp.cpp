@@ -608,7 +608,7 @@ void PatchWorkpp::pc2czm(const Eigen::MatrixXf &src, std::vector<Zone> &czm) {
             }
 
         } else {
-            cloud_nonground_.push_back(PointXYZ(x, y, z));
+            cloud_nonground_.push_back(PointXYZ(x, y, z, intensity));
         }
     }
     if (params_.verbose) cout << "\033[1;33m" << "PatchWorkpp::pc2czm() - Divides pointcloud into the concentric zone model successfully" << "\033[0m" << endl;
