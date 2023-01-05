@@ -7,11 +7,11 @@
 <p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
 
 * An extension of [Patchwork][patchworklink] (RA-L'21 with IROS'21).
-* Please refer our [paper][arXivlink] for detailed explanantions and experimental results!
+* Please refer our [paper][patchworkppIEEElink] for detailed explanantions and experimental results!
 
    * Validated on [SemanticKITTI][SemanticKITTIlink] dataset. The benchmark code is available on [here][benchmarklink].
 
-* :bulb: Contents: [YouTube][YouTubeLink]
+* :bulb: Contents: [YouTube][YouTubeLink], [arXiv][arXivlink], [IEEE *Xplore*][patchworkppIEEElink]
 
 [YouTubeLInk]: https://www.youtube.com/watch?v=fogCM159GRk
 [arXivlink]: https://arxiv.org/abs/2207.11919
@@ -95,19 +95,19 @@ It is a ground segmentation result of data/000000.bin file using Open3D visualiz
 
 ![Open3D Visualization of "data/000000.bin"](pictures/demo_000000.png)
 
-## Citation
-If you use our codes, please cite our paper ([arXiv][arXivLink])
+## :pencil: Citation
+If you use our codes, please cite our paper ([arXiv][arXivLink], [IEEE *Xplore*][patchworkppIEEElink])
 ```
 @inproceedings{lee2022patchworkpp,
     title={{Patchwork++: Fast and robust ground segmentation solving partial under-segmentation using 3D point cloud}},
     author={Lee, Seungjae and Lim, Hyungtae and Myung, Hyun},
     booktitle={Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst.},
     year={2022},
-    note={{Submitted}} 
+    pages={13276-13283}
 }
 ```
 
-In addition, you can also check the paper of our baseline(Patchwork) [here][patchworkarXivlink].
+In addition, you can also check the paper of our baseline, Patchwork. ([arXiv][patchworkarXivlink], [IEEE *Xplore*][patchworkIEEElink])
 ```
 @article{lim2021patchwork,
     title={Patchwork: Concentric Zone-based Region-wise Ground Segmentation with Ground Likelihood Estimation Using a 3D LiDAR Sensor},
@@ -116,7 +116,17 @@ In addition, you can also check the paper of our baseline(Patchwork) [here][patc
     year={2021}
 }
 ```
+[patchworkppIEEElink]: https://ieeexplore.ieee.org/document/9981561
 [patchworkarXivlink]: https://arxiv.org/abs/2108.05560
+[patchworkIEEElink]: https://ieeexplore.ieee.org/document/9466396
+
+## :triangular_flag_on_post: Tested Environment
+
+- Ubuntu 18.04 and 20.04
+- CMake 3.25.1 (>=3.20, min. Required to install Open3D)
+- Open3D 0.15.2
+- pybind11 v2.2.3
+- Eigen 3.3.7
 
 
 ## :mailbox: Contact Information
