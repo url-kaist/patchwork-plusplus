@@ -4,6 +4,10 @@
 #include <fstream>
 #include <open3d/Open3D.h>
 
+// for list folder
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 using namespace open3d;
 
 int filename_length = std::string("demo_visaulize.cpp").length();
@@ -52,12 +56,17 @@ int main(int argc, char* argv[]) {
   if (argc < 2) {
     // Try out running on the test datasets.
     input_cloud_filepath = data_dir + "000000.bin";
-    std::cout << "\033[1;33mNo file path specified; defaulting to the test "
-                    "directory. \033[0m" << std::endl;
+    std::cout << "\033[1;33mNo point cloud file path specified; defaulting to the test directory. \033[0m" << std::endl;
   } else {
     input_cloud_filepath = argv[1];
-    std::cout << "\033[1;32mLoading 3DMatch files from " << input_cloud_filepath << "\033[0m" << std::endl;
+    std::cout << "\033[1;32mLoading point cloud files from " << input_cloud_filepath << "\033[0m" << std::endl;
   }
+  if(!fs::exists(input_cloud_filepath)){
+    std::cout << "\033[1;31mERROR HERE: maybe wrong data file path, please check the path or remove argv to run default one. \033[0m" 
+              << "\nThe file path you provide is: " << input_cloud_filepath << std::endl;
+    return 0;
+  }
+
   // Patchwork++ initialization
   patchwork::Params patchwork_parameters;
   patchwork_parameters.verbose = true;
