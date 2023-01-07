@@ -9,7 +9,7 @@ using namespace open3d;
 int filename_length = std::string("demo_visaulize.cpp").length();
 std::string file_dir = std::string(__FILE__);
 std::string data_dir = file_dir.substr(0, file_dir.size()-filename_length) + "../../data/";
-std::string input_cloud_filepath = data_dir + "000000.bin";
+
 
 void read_bin(std::string bin_path, Eigen::MatrixXf &cloud)
 {
@@ -44,10 +44,20 @@ void addNormals(Eigen::MatrixXf normals, std::shared_ptr<geometry::PointCloud> g
 }
 
 
-int main() {
+int main(int argc, char* argv[]) {
 
   cout << "Execute" << __FILE__ << endl;
-  
+  // Get the dataset
+  std::string input_cloud_filepath;
+  if (argc < 2) {
+    // Try out running on the test datasets.
+    input_cloud_filepath = data_dir + "000000.bin";
+    std::cout << "\033[1;33mNo file path specified; defaulting to the test "
+                    "directory. \033[0m" << std::endl;
+  } else {
+    input_cloud_filepath = argv[1];
+    std::cout << "\033[1;32mLoading 3DMatch files from " << input_cloud_filepath << "\033[0m" << std::endl;
+  }
   // Patchwork++ initialization
   patchwork::Params patchwork_parameters;
   patchwork_parameters.verbose = true;

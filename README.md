@@ -86,6 +86,9 @@ $ ./examples/cpp/demo_visualize
 
 # Run patchwork++ with sequential point cloud inputs 
 $ ./examples/cpp/demo_sequential
+
+# Run patchwork++ with your point cloud file, example here
+$ ./examples/cpp/demo_visualize /home/kin/data/1670247988.bin
 ```
 
 ### Demo Result
