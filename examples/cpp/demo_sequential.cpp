@@ -3,6 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <open3d/Open3D.h>
+// for list folder
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 
 using namespace open3d;
 
@@ -53,10 +56,10 @@ int main() {
 
   patchwork::PatchWorkpp Patchworkpp(patchwork_parameters);
 
-  for (int i=0; i<6; i++)
+  for (const fs::directory_entry & entry : fs::directory_iterator(data_dir))
   {
     // Load point cloud
-    std::string file = data_dir + "00000" + std::to_string(i) + ".bin";
+    std::string file = entry.path().c_str();
     Eigen::MatrixXf cloud;
     read_bin(file, cloud);
 
