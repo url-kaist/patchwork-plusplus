@@ -82,13 +82,13 @@ $ python examples/python/demo_sequential.py
 ### C++
 ```bash
 # Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ ./examples/cpp/demo_visualize
+$ ./build/examples/cpp/demo_visualize
 
 # Run patchwork++ with sequential point cloud inputs 
-$ ./examples/cpp/demo_sequential
+$ ./build/examples/cpp/demo_sequential
 
 # Run patchwork++ with your point cloud file, example here
-$ ./examples/cpp/demo_visualize /home/kin/data/1670247988.bin
+$ ./build/examples/cpp/demo_visualize ./data/000000.bin # specify file path
 ```
 
 ### Demo Result
