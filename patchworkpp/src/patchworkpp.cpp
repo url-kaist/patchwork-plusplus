@@ -223,11 +223,18 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
                     Therefore, we only check this value when concentric_idx < num_rings_of_interest ( near condition )
                 */
                 bool is_upright         = ground_uprightness > params_.uprightness_thr;
-                bool is_not_elevated    = ground_elevation < params_.elevation_thr[concentric_idx];
-                bool is_flat            = ground_flatness < params_.flatness_thr[concentric_idx];
                 bool is_near_zone       = concentric_idx < params_.num_rings_of_interest;
                 bool is_heading_outside = heading < 0.0;
 
+                bool is_not_elevated = false;
+                bool is_flat         = false;
+
+                if (concentric_idx < params_.num_rings_of_interest)
+                {
+                    is_not_elevated = ground_elevation < params_.elevation_thr[concentric_idx];
+                    is_flat         = ground_flatness < params_.flatness_thr[concentric_idx];
+                }
+                
                 /*
                     Store the elevation & flatness variables
                     for A-GLE (Adaptive Ground Likelihood Estimation)
