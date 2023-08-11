@@ -2,7 +2,7 @@
 
 ## :bookmark_tabs: About Patchwork++ (IROS'22)
 
-* A fast and robust **ground segmentation algorithm** on 3D point cloud.
+* A fast, robust, and self-adaptive **ground segmentation algorithm** on 3D point cloud.
 
 <p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
 
