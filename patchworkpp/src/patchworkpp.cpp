@@ -15,6 +15,17 @@ Eigen::MatrixX3f PatchWorkpp::toEigenCloud(vector<PointXYZ> cloud)
     return dst;
 }
 
+Eigen::VectorXi PatchWorkpp::toIndices(vector<PointXYZ> cloud)
+{
+    Eigen::VectorXi dst(cloud.size());
+    int j = 0;
+    for (auto &p : cloud)
+    {
+        dst.row(j++) << p.idx;
+    }
+    return dst;
+}
+
 void PatchWorkpp::addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add)
 {
     cloud.insert(cloud.end(), add.begin(), add.end());
@@ -380,7 +391,7 @@ void PatchWorkpp::reflected_noise_removal(Eigen::MatrixXf &cloud_in)
 
         if ( ver_angle_in_deg < params_.RNR_ver_angle_thr && z < -params_.sensor_height-0.8 && cloud_in.row(i)(3) < params_.RNR_intensity_thr)
         {
-            cloud_nonground_.push_back(PointXYZ(cloud_in.row(i)(0), cloud_in.row(i)(1), cloud_in.row(i)(2)));
+            cloud_nonground_.push_back(PointXYZ(cloud_in.row(i)(0), cloud_in.row(i)(1), cloud_in.row(i)(2), i));
             cloud_in.row(i)(2) = std::numeric_limits<float>::min();
             cnt++;
         }
@@ -589,23 +600,23 @@ void PatchWorkpp::pc2czm(const Eigen::MatrixXf &src, std::vector<Zone> &czm) {
             if (r < min_range_1) { // In First rings
                 ring_idx = min(static_cast<int>(((r - min_range_0) / ring_sizes_[0])), num_ring_0 - 1);
                 sector_idx = min(static_cast<int>((theta / sector_sizes_[0])), num_sector_0 - 1);
-                czm[0][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z));
+                czm[0][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z, i));
             } else if (r < min_range_2) {
                 ring_idx = min(static_cast<int>(((r - min_range_1) / ring_sizes_[1])), num_ring_1 - 1);
                 sector_idx = min(static_cast<int>((theta / sector_sizes_[1])), num_sector_1 - 1);
-                czm[1][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z));
+                czm[1][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z, i));
             } else if (r < min_range_3) {
                 ring_idx = min(static_cast<int>(((r - min_range_2) / ring_sizes_[2])), num_ring_2 - 1);
                 sector_idx = min(static_cast<int>((theta / sector_sizes_[2])), num_sector_2 - 1);
-                czm[2][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z));
+                czm[2][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z, i));
             } else { // Far!
                 ring_idx = min(static_cast<int>(((r - min_range_3) / ring_sizes_[3])), num_ring_3 - 1);
                 sector_idx = min(static_cast<int>((theta / sector_sizes_[3])), num_sector_3 - 1);
-                czm[3][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z));
+                czm[3][ring_idx][sector_idx].emplace_back(PointXYZ(x, y, z, i));
             }
 
         } else {
-            cloud_nonground_.push_back(PointXYZ(x, y, z));
+            cloud_nonground_.push_back(PointXYZ(x, y, z, i));
         }
     }
     if (params_.verbose) cout << "\033[1;33m" << "PatchWorkpp::pc2czm() - Divides pointcloud into the concentric zone model successfully" << "\033[0m" << endl;
