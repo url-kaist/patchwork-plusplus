@@ -1,42 +1,85 @@
-cmake_minimum_required(VERSION 3.11)
-project(PATCHWORK VERSION 1.0.0)
+cmake_minimum_required(VERSION 3.5)
+project(patchworkpp)
+add_compile_options(-std=c++17)
+set(CMAKE_BUILD_TYPE "Release")
 
 set(CMAKE_CXX_STANDARD 14)
-set(PYTHON_EXECUTABLE python3)
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_definitions(-DTARGET_ROS2)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(pcl_ros REQUIRED)
+find_package(pcl_conversions REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(rclcpp_components REQUIRED)
+find_package(Boost 1.54 REQUIRED)
+
+set(INCLUDE_DIRS include 
+${ament_cmake_INCLUDE_DIRS} 
+${rclcpp_INCLUDE_DIRS}
+${pcl_ros_INCLUDE_DIRS} 
+${pcl_conversions_INCLUDE_DIRS}
+${std_msgs_INCLUDE_DIRS}
+${sensor_msgs_INCLUDE_DIRS}
+${rclcpp_components_INCLUDE_DIRS})
+# Include
+include_directories(${INCLUDE_DIRS})
+
+set(LIBRARY_DIRS 
+${ament_cmake_LIBRARY_DIRS} 
+${rclcpp_LIBRARY_DIRS}
+${pcl_ros_LIBRARY_DIRS} 
+${pcl_conversions_LIBRARY_DIRS}
+${std_msgs_LIBRARY_DIRS}
+${sensor_msgs_LIBRARY_DIRS}
+${rclcpp_components_LIBRARY_DIRS})
+#  Linking
+link_directories(${LIBRARY_DIRS})
+
+set(LIBS 
+${ament_cmake_LIBRARIES} 
+${rclcpp_LIBRARIES} 
+${pcl_ros_LIBRARIES} 
+${pcl_conversions_LIBRARIES} 
+${std_msgs_LIBRARIES} 
+${sensor_msgs_LIBRARIES}
+${rclcpp_components_LIBRARIES})
 
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Open3D_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Open3D_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Open3D_EXE_LINKER_FLAGS}")
+add_executable(demo src/demo.cpp)
+target_link_libraries(demo ${LIBS} ${PCL_LIBRARIES} )
 
-if(CMAKE_VERSION VERSION_LESS "3.15")
-  include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/ListPrepend.cmake")
-  list_prepend(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-else()
-  list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-endif()
+add_library(patchworkpp SHARED src/patchworkpp.cpp)
+target_compile_definitions(patchworkpp PUBLIC "PATCHWORKPP_COMPOSITION_BUILDING_DLL")
+target_link_libraries(patchworkpp ${LIBS})
 
-include(FetchContent)
-include(pybind11)
+install(TARGETS
+patchworkpp
+ARCHIVE DESTINATION lib
+LIBRARY DESTINATION lib
+RUNTIME DESTINATION bin
+)
 
-find_package(Eigen3 REQUIRED QUIET)
-find_package(Open3D HINTS ${CMAKE_INSTALL_PREFIX}/lib/CMake)
-list(APPEND Open3D_LIBRARIES dl)
+# ==== Install ====
+install(TARGETS demo
+ARCHIVE
+LIBRARY
+RUNTIME
+DESTINATION lib/${PROJECT_NAME})
 
-message(STATUS "Found Open3D ${Open3D_VERSION}")
-link_directories(${Open3D_LIBRARY_DIRS})
+install(DIRECTORY include/${PROJECT_NAME}/
+DESTINATION include/${PROJECT_NAME})
 
-add_subdirectory(patchworkpp)
-add_subdirectory(python_wrapper)
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
 
-add_executable(demo_visualize examples/cpp/demo_visualize.cpp)
-target_link_libraries(demo_visualize PRIVATE PATCHWORK::patchworkpp ${Open3D_LIBRARIES} "stdc++fs")
-target_include_directories(demo_visualize PUBLIC ${Open3D_INCLUDE_DIRS})
-set_target_properties(demo_visualize PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/examples/cpp")
-
-add_executable(demo_sequential examples/cpp/demo_sequential.cpp)
-target_link_libraries(demo_sequential PRIVATE PATCHWORK::patchworkpp ${Open3D_LIBRARIES} "stdc++fs")
-target_include_directories(demo_sequential PUBLIC ${Open3D_INCLUDE_DIRS})
-set_target_properties(demo_sequential PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/examples/cpp")
-
+ament_export_dependencies(ament_cmake)
+ament_export_dependencies(rclcpp)
+ament_export_dependencies(pcl_ros)
+ament_export_dependencies(pcl_conversions)
+ament_export_dependencies(std_msgs)
+ament_export_dependencies(sensor_msgs)
+ament_export_include_directories(${INCLUDE_DIRS})
+ament_package()

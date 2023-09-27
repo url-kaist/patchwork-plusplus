@@ -1,8 +1,0 @@
-FUNCTION(list_prepend var value)
-  message("${${var}}")
-  if("${${var}}" STREQUAL "")
-    SET(${var} "${value}" PARENT_SCOPE)
-  else()
-    SET(${var} "${value}" "${${var}}" PARENT_SCOPE)
-  endif()
-ENDFUNCTION(list_prepend)
