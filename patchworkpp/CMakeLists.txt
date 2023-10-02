@@ -2,7 +2,11 @@ project(patchworkpp_src)
 
 include(GNUInstallDirs)
 
-add_library(patchworkpp SHARED src/patchworkpp.cpp)
+find_package(Eigen3 REQUIRED QUIET)
+
+add_library(patchworkpp STATIC src/patchworkpp.cpp)
+set_target_properties(patchworkpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_include_directories(patchworkpp PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
