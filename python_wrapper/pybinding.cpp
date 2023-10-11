@@ -49,6 +49,8 @@ PYBIND11_MODULE(pypatchworkpp, m) {
         .def("getGround",       &patchwork::PatchWorkpp::getGround)
         .def("getNonground",    &patchwork::PatchWorkpp::getNonground)
         .def("getCenters",      &patchwork::PatchWorkpp::getCenters)
+        .def("getGroundIndices", 	&patchwork::PatchWorkpp::getGroundIndices)
+        .def("getNongroundIndices", &patchwork::PatchWorkpp::getNongroundIndices)
         .def("getNormals",      &patchwork::PatchWorkpp::getNormals)        
         .def("estimateGround",  &patchwork::PatchWorkpp::estimateGround);
         // .def_readwrite("sensor_height_", &PatchWorkpp::sensor_height_);

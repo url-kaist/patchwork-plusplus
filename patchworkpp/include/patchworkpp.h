@@ -17,8 +17,9 @@ struct PointXYZ {
     float x;
     float y;
     float z;
+    int idx;
 
-    PointXYZ(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+    PointXYZ(float _x, float _y, float _z, int _idx=-1) : x(_x), y(_y), z(_z), idx(_idx) {}
 };
 
 struct RevertCandidate 
@@ -151,6 +152,8 @@ public:
 
     Eigen::MatrixX3f getGround() { return toEigenCloud(cloud_ground_); }
     Eigen::MatrixX3f getNonground() { return toEigenCloud(cloud_nonground_); }
+    Eigen::VectorXi getGroundIndices() { return toIndices(cloud_ground_); }
+    Eigen::VectorXi getNongroundIndices() { return toIndices(cloud_nonground_); }
     
     Eigen::MatrixX3f getCenters() { return toEigenCloud(centers_); }
     Eigen::MatrixX3f getNormals() { return toEigenCloud(normals_); }
@@ -188,6 +191,7 @@ private:
     vector<PointXYZ> centers_, normals_;
 
     Eigen::MatrixX3f toEigenCloud(vector<PointXYZ> cloud);
+    Eigen::VectorXi toIndices(vector<PointXYZ> cloud);
 
     void addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add);
     
