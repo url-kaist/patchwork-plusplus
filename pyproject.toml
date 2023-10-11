@@ -1,0 +1,21 @@
+[build-system]
+requires = ["scikit_build_core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "pypatchworkpp"
+version = "0.0.1"
+requires-python = ">=3.8"
+description = "ground segmentation"
+dependencies = [
+	"numpy>=1.23"
+]
+
+[project.optional-dependencies]
+demo = [
+	"open3d-cpu>=0.17"
+]
+
+[tool.scikit-build]
+cmake.args = ["-DINCLUDE_PYTHON_WRAPPER=true"]
+

@@ -1,19 +1,11 @@
 import os
-import sys
 import open3d as o3d
 import numpy as np
-# import pypatchworkpp
+import pypatchworkpp
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(cur_dir, '../../data/')
 
-try:
-    patchwork_module_path = os.path.join(cur_dir, "../../build/python_wrapper")
-    sys.path.insert(0, patchwork_module_path)
-    import pypatchworkpp
-except ImportError:
-    print("Cannot find pypatchworkpp!")
-    exit(1)
 
 def read_bin(bin_path):
     scan = np.fromfile(bin_path, dtype=np.float32)
