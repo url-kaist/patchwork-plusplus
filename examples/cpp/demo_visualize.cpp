@@ -83,9 +83,10 @@ int main(int argc, char* argv[]) {
   // Get Ground and Nonground
   Eigen::MatrixX3f ground     = Patchworkpp.getGround();
   Eigen::MatrixX3f nonground  = Patchworkpp.getNonground();
-  Eigen::VectorXi ground_idx = Patchworkpp.getGroundIndices();
-  Eigen::VectorXi nonground_idx = Patchworkpp.getNongroundIndices();
   double time_taken = Patchworkpp.getTimeTaken();
+
+  Eigen::VectorXi ground_idx    = Patchworkpp.getGroundIndices();
+  Eigen::VectorXi nonground_idx = Patchworkpp.getNongroundIndices();
 
   // Get centers and normals for patches
   Eigen::MatrixX3f centers    = Patchworkpp.getCenters();

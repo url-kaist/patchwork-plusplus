@@ -19,8 +19,7 @@ Eigen::VectorXi PatchWorkpp::toIndices(vector<PointXYZ> cloud)
 {
     Eigen::VectorXi dst(cloud.size());
     int j = 0;
-    for (auto &p : cloud)
-    {
+    for (auto &p: cloud) {
         dst.row(j++) << p.idx;
     }
     return dst;

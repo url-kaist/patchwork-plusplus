@@ -42,6 +42,9 @@ if __name__ == "__main__":
         nonground   = PatchworkPLUSPLUS.getNonground()
         time_taken  = PatchworkPLUSPLUS.getTimeTaken()
 
+        ground_idx      = PatchworkPLUSPLUS.getGroundIndices()
+        nonground_idx   = PatchworkPLUSPLUS.getNongroundIndices()
+
         # Get centers and normals for patches
         centers     = PatchworkPLUSPLUS.getCenters()
         normals     = PatchworkPLUSPLUS.getNormals()
