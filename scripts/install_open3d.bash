@@ -1,11 +1,18 @@
 set -e
 
+sudo apt-get install libeigen3-dev
+pip install numpy
+
+pip install open3d
+
 VERSION=0.15.1
 
 [ ! -d Open3D ] && git clone https://github.com/isl-org/Open3D.git -b v$VERSION || echo "Skip pulling repo"
 
-[ ! -d Open3D/build ] && mkdir Open3D/build
-cd Open3D/build
+cd Open3D && util/install_deps_ubuntu.sh
+
+[ ! -d build ] && mkdir build
+cd build
 
 cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
@@ -16,7 +23,12 @@ cmake .. \
     -DBUILD_WEBRTC=OFF
 
 
-make -j$(nproc)
+if make -j$(nproc); then
+    echo "Build Open3D successful"
+else
+    echo "Build failed, try 'make' several times ..."
+    exit 1
+fi
 
 echo "Applying 'sudo make install'. Enter password"
 sudo make install

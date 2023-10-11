@@ -22,6 +22,9 @@ list(APPEND Open3D_LIBRARIES dl)
 
 add_subdirectory(patchworkpp)
 
+set(INCLUDE_PYTHON_WRAPPER OFF CACHE BOOL "Build Python wrapper")
+set(INCLUDE_EXAMPLES ON CACHE BOOL "Build examples")
+
 if (INCLUDE_PYTHON_WRAPPER)
 
   message(STATUS "Building Python wrapper")

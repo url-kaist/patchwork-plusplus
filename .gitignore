@@ -4,3 +4,5 @@ build/
 
 examples/cpp/demo_visualize
 examples/cpp/demo_sequential
+
+Open3D/

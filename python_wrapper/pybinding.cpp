@@ -8,8 +8,8 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(pypatchworkpp, m) {
 
-    m.doc() = "Python Patchwork";
-    m.attr("__version__") = 1;
+    m.doc() = "Python Patchwork++";
+    m.attr("__version__") = "0.0.1";
 
     py::class_<patchwork::Params>(m, "Parameters")
         .def(py::init<>())

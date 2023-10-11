@@ -38,6 +38,16 @@
 > You may need to install Eigen, numpy, and Open3D. Open3D is used for point cloud visualization.
 
 ```bash
+# Install prerequisite packages including Open3D
+$ git clone https://github.com/url-kaist/patchwork-plusplus
+$ cd patchwork-plusplus
+$ bash scripts/install_open3d.bash
+```
+
+<details>
+<summary> Manual Installation line-by-line </summary>
+
+```bash
 # To install Eigen and numpy
 $ sudo apt-get install libeigen3-dev
 $ pip install numpy
@@ -51,16 +61,24 @@ $ cd Open3D
 $ util/install_deps_ubuntu.sh # Only needed for Ubuntu
 $ mkdir build && cd build
 $ cmake ..
-$ make
+$ make # If it fails, try several times or try 'sudo make'
 $ sudo make install
 ```
+
+</details>
 
 ## :gear: How to build
 > Please follow below codes to build Patchwork++.
 
+### Python
 ```bash
-$ git clone https://github.com/url-kaist/patchwork-plusplus
-$ cd patchwork-plusplus
+# in patchwork-plusplus directory
+$ pip install . 
+```
+
+### C++
+```bash
+# in patchwork-plusplus directory
 $ mkdir build && cd build
 $ cmake ..
 $ make
