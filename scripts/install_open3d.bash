@@ -13,7 +13,7 @@ $SUDO apt-get install git libeigen3-dev python3-pip -y
 
 # Install CMake > 3.20 for Open3D 0.18.0 version
 # Please refer to 'https://apt.kitware.com/'
-$SUDO apt-get install ca-certificates gpg wget
+$SUDO apt-get install ca-certificates gpg wget -y
 test -f /usr/share/doc/kitware-archive-keyring/copyright ||
 wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | $SUDO tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
 
