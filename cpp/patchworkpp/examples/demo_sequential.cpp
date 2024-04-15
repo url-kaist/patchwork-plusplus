@@ -11,7 +11,7 @@ using namespace open3d;
 
 int filename_length = std::string("demo_sequential.cpp").length();
 std::string file_dir = std::string(__FILE__);
-std::string data_dir = file_dir.substr(0, file_dir.size()-filename_length) + "../../data/";
+std::string data_dir = file_dir.substr(0, file_dir.size()-filename_length) + "../../../data/";
 
 void read_bin(std::string bin_path, Eigen::MatrixXf &cloud)
 {

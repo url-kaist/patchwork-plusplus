@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.11)
 project(PATCHWORK VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 set(PYTHON_EXECUTABLE python3)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -36,11 +36,11 @@ if (INCLUDE_EXAMPLES)
   add_executable(demo_visualize ${CMAKE_CURRENT_SOURCE_DIR}/patchworkpp/examples/demo_visualize.cpp)
   target_link_libraries(demo_visualize PRIVATE PATCHWORK::patchworkpp ${Open3D_LIBRARIES} "stdc++fs")
   target_include_directories(demo_visualize PUBLIC ${Open3D_INCLUDE_DIRS})
-  set_target_properties(demo_visualize PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/examples/cpp")
+  set_target_properties(demo_visualize PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/examples")
 
   add_executable(demo_sequential ${CMAKE_CURRENT_SOURCE_DIR}/patchworkpp/examples/demo_sequential.cpp)
   target_link_libraries(demo_sequential PRIVATE PATCHWORK::patchworkpp ${Open3D_LIBRARIES} "stdc++fs")
   target_include_directories(demo_sequential PUBLIC ${Open3D_INCLUDE_DIRS})
-  set_target_properties(demo_sequential PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/examples/cpp")
+  set_target_properties(demo_sequential PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/examples")
 
 endif()
