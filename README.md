@@ -73,13 +73,13 @@ $ sudo make install
 ### Python
 ```bash
 # in patchwork-plusplus directory
-$ pip install . 
+$ cd python && pip install . 
 ```
 
 ### C++
 ```bash
 # in patchwork-plusplus directory
-$ mkdir build && cd build
+$ mkdir cpp/build && cd cpp/build
 $ cmake ..
 $ make
 ```
@@ -91,22 +91,22 @@ $ make
 ### Python
 ```bash
 # Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ python examples/python/demo_visualize.py
+$ python examples/demo_visualize.py
 
 # Run patchwork++ with sequential point cloud inputs 
-$ python examples/python/demo_sequential.py
+$ python examples/demo_sequential.py
 ```
 
 ### C++
 ```bash
 # Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ ./build/examples/cpp/demo_visualize
+$ ./examples/demo_visualize
 
 # Run patchwork++ with sequential point cloud inputs 
-$ ./build/examples/cpp/demo_sequential
+$ ./examples/demo_sequential
 
 # Run patchwork++ with your point cloud file, example here
-$ ./build/examples/cpp/demo_visualize ./data/000000.bin # specify file path
+$ ./examples/demo_visualize ./data/000000.bin # specify file path
 ```
 
 ### Demo Result
@@ -143,17 +143,18 @@ In addition, you can also check the paper of our baseline, Patchwork. ([arXiv][p
 
 ## :triangular_flag_on_post: Tested Environment
 
-- Ubuntu 18.04 and 20.04
+- Ubuntu ~~18.04 and~~ 20.04 and 22.04
 - CMake 3.25.1 (>=3.20, min. Required to install Open3D)
-- Open3D 0.15.2
+  - In `scripts/install_open3d.bash`, the installation of the higher version of CMake is already implemented.
+- Open3D ~~0.15.2~~ 0.18.0
 - pybind11 v2.2.3
 - Eigen 3.3.7
 
 
 ## :mailbox: Contact Information
 If you have any questions, please do not hesitate to contact us
-* [Seungjae Lee][sjlink] :envelope: `sj98lee at kaist.ac.kr`
-* [Hyungtae Lim][htlink] :envelope: `shapelim at kaist.ac.kr`
+* [Seungjae Lee][sjlink] :envelope: sj98lee `at` kaist `ac` kr
+* [Hyungtae Lim][htlink] :envelope: shapelim `at` kaist `ac` kr
 
 [sjlink]: https://github.com/seungjae24
 [htlink]: https://github.com/LimHyungTae
