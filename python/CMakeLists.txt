@@ -15,7 +15,8 @@ else()
   cmake_minimum_required(VERSION 3.18)
   message(STATUS "Performing out-of-tree build, fetching Patchwork++ v${CMAKE_PROJECT_VERSION} Release from Github")
   include(FetchContent)
-  ## To be update ##
+  # Currently, out-of-source build is not supported.
+  # But, it will be updated soon!
 endif()
 
 pybind11_add_module(pypatchworkpp patchworkpp/pybinding.cpp)
