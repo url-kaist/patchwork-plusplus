@@ -5,6 +5,12 @@ set(ignore ${CATKIN_INSTALL_INTO_PREFIX_ROOT})
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Parameters used in `patchworkpp` subdirectory.
+# Thus, link should be `patchworkpp::ground_seg_cores`
+# See https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp/CMakeLists.txt#L21
+set(PARENT_PROJECT_NAME patchworkpp)
+set(TARGET_NAME ground_seg_cores)
+
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp ${CMAKE_CURRENT_BINARY_DIR}/patchworkpp_cpp)
 else()
@@ -27,7 +33,7 @@ find_package(tf2_ros REQUIRED)
 add_library(gseg_component SHARED src/GroundSegmentationServer.cpp)
 target_compile_features(gseg_component PUBLIC cxx_std_20)
 target_include_directories(gseg_component PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(gseg_component PATCHWORK::patchworkpp)
+target_link_libraries(gseg_component ${PARENT_PROJECT_NAME}::${TARGET_NAME})
 ament_target_dependencies(
   gseg_component
   rcutils
