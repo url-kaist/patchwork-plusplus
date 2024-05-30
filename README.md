@@ -1,17 +1,27 @@
-# Patchwork++
+<div align="center">
+    <h1>Patchwork++</h1>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/patchworkpp"><img src="https://img.shields.io/badge/-C++-blue?logo=cplusplus" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Python-3670A0?logo=python&logoColor=ffdd54" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/ros"><img src="https://img.shields.io/badge/ROS2-Humble-blue" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
+    <a href="https://ieeexplore.ieee.org/document/9981561"><img src="https://img.shields.io/badge/DOI-10.1109/IROS47612.2022.9981561-004088.svg"/>
+    <br />
+    <br />
+    <a href=https://www.youtube.com/watch?v=fogCM159GRk>Video</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/README.md###Python">Install</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/ros">ROS2</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href=https://www.youtube.com/watch?v=fogCM159GRk>Paper</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href=https://github.com/url-kaist/patchwork-plusplus/issues>Contact Us</a>
+  <br />
+  <br />
+  <p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
 
-## :bookmark_tabs: About Patchwork++ (IROS'22)
-
-* A fast, robust, and self-adaptive **ground segmentation algorithm** on 3D point cloud.
-
-<p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
-
-* An extension of [Patchwork][patchworklink] (RA-L'21 with IROS'21).
-* Please refer our [paper][patchworkppIEEElink] for detailed explanantions and experimental results!
-
-   * Validated on [SemanticKITTI][SemanticKITTIlink] dataset. The benchmark code is available on [here][benchmarklink].
-
-* :bulb: Contents: [YouTube][YouTubeLink], [arXiv][arXivlink], [IEEE *Xplore*][patchworkppIEEElink]
+  [Patchwork++][arXivlink], an extension of [Patchwork][patchworklink], is **a fast, robust, and self-adaptive ground segmentation algorithm** on 3D point cloud.
+</div>
 
 [YouTubeLInk]: https://www.youtube.com/watch?v=fogCM159GRk
 [arXivlink]: https://arxiv.org/abs/2207.11919
@@ -25,7 +35,7 @@
 * Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
 * Examples codes, which visualizes a ground segmentation result by Patchwork++ ([examples][examplelink]) :thumbsup:
 
-> If you are familiar with ROS, you can also visit [here][roslink] and try executing ROS-based Patchwork++!
+> If you are familiar with ROS1, you can also visit [here][roslink] and try executing ROS1-based Patchwork++!
 
 [roslink]: https://github.com/url-kaist/patchwork-plusplus-ros
 
@@ -73,13 +83,13 @@ $ sudo make install
 ### Python
 ```bash
 # in patchwork-plusplus directory
-$ pip install . 
+$ cd python && pip install . 
 ```
 
 ### C++
 ```bash
 # in patchwork-plusplus directory
-$ mkdir build && cd build
+$ mkdir cpp/build && cd cpp/build
 $ cmake ..
 $ make
 ```
@@ -91,22 +101,22 @@ $ make
 ### Python
 ```bash
 # Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ python examples/python/demo_visualize.py
+$ python examples/demo_visualize.py
 
 # Run patchwork++ with sequential point cloud inputs 
-$ python examples/python/demo_sequential.py
+$ python examples/demo_sequential.py
 ```
 
 ### C++
 ```bash
 # Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ ./build/examples/cpp/demo_visualize
+$ ./examples/demo_visualize
 
 # Run patchwork++ with sequential point cloud inputs 
-$ ./build/examples/cpp/demo_sequential
+$ ./examples/demo_sequential
 
 # Run patchwork++ with your point cloud file, example here
-$ ./build/examples/cpp/demo_visualize ./data/000000.bin # specify file path
+$ ./examples/demo_visualize ./data/000000.bin # specify file path
 ```
 
 ### Demo Result
@@ -143,17 +153,18 @@ In addition, you can also check the paper of our baseline, Patchwork. ([arXiv][p
 
 ## :triangular_flag_on_post: Tested Environment
 
-- Ubuntu 18.04 and 20.04
+- Ubuntu ~~18.04 and~~ 20.04 and 22.04
 - CMake 3.25.1 (>=3.20, min. Required to install Open3D)
-- Open3D 0.15.2
+  - In `scripts/install_open3d.bash`, the installation of the higher version of CMake is already implemented.
+- Open3D ~~0.15.2~~ 0.18.0
 - pybind11 v2.2.3
 - Eigen 3.3.7
 
 
 ## :mailbox: Contact Information
 If you have any questions, please do not hesitate to contact us
-* [Seungjae Lee][sjlink] :envelope: `sj98lee at kaist.ac.kr`
-* [Hyungtae Lim][htlink] :envelope: `shapelim at kaist.ac.kr`
+* [Seungjae Lee][sjlink] :envelope: sj98lee `at` kaist `ac` kr
+* [Hyungtae Lim][htlink] :envelope: shapelim `at` kaist `ac` kr
 
 [sjlink]: https://github.com/seungjae24
 [htlink]: https://github.com/LimHyungTae
