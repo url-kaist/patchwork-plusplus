@@ -2,32 +2,34 @@ project(patchworkpp_src)
 
 include(GNUInstallDirs)
 
+message("Parent project name: " ${PARENT_PROJECT_NAME})
+
 find_package(Eigen3 REQUIRED QUIET)
 
-add_library(patchworkpp STATIC src/patchworkpp.cpp)
-set_target_properties(patchworkpp PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_library(${TARGET_NAME} STATIC src/patchworkpp.cpp)
+set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(patchworkpp PUBLIC
+target_include_directories(${TARGET_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_link_libraries(patchworkpp Eigen3::Eigen)
-add_library(PATCHWORK::patchworkpp ALIAS patchworkpp)
+target_link_libraries(${TARGET_NAME} Eigen3::Eigen)
+add_library(${PARENT_PROJECT_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
   DESTINATION include
 )
-install(TARGETS patchworkpp
-  EXPORT PATCHWORKConfig
+install(TARGETS ${TARGET_NAME}
+  EXPORT ${PARENT_PROJECT_NAME}Config
   LIBRARY DESTINATION lib
 )
 
-export(TARGETS patchworkpp
-  NAMESPACE PATCHWORK::
-  FILE "${CMAKE_CURRENT_BINARY_DIR}/PATCHWORKConfig.cmake"
+export(TARGETS ${TARGET_NAME}
+  NAMESPACE ${PARENT_PROJECT_NAME}::
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/${PARENT_PROJECT_NAME}Config.cmake"
 )
-install(EXPORT PATCHWORKConfig
-  DESTINATION "${CMAKE_INSTALL_DATADIR}/PATCHWORK/cmake"
-  NAMESPACE PATCHWORK::
+install(EXPORT ${PARENT_PROJECT_NAME}Config
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/${PARENT_PROJECT_NAME}/cmake"
+  NAMESPACE ${PARENT_PROJECT_NAME}::
 )

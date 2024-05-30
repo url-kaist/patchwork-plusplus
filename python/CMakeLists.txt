@@ -6,6 +6,12 @@ set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+# Parameters used in `patchworkpp` subdirectory.
+# Thus, link should be `patchworkpp::ground_seg_cores`
+# See https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp/CMakeLists.txt#L21
+set(PARENT_PROJECT_NAME patchworkpp)
+set(TARGET_NAME ground_seg_cores)
+
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
@@ -21,7 +27,7 @@ endif()
 
 pybind11_add_module(pypatchworkpp patchworkpp/pybinding.cpp)
 
-target_link_libraries(pypatchworkpp PUBLIC PATCHWORK::patchworkpp)
+target_link_libraries(pypatchworkpp PUBLIC ${PARENT_PROJECT_NAME}::${TARGET_NAME})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   target_compile_options(pypatchworkpp PUBLIC -fsized-deallocation)
