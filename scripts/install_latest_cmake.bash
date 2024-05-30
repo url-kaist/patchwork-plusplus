@@ -25,6 +25,7 @@ fi
 $SUDO apt-get update -y
 $SUDO apt-get install git libeigen3-dev python3-pip -y
 
+echo -e "\e[33mThe version of your cmake is too low. Installing the latest cmake...\e[0m"
 # Install CMake > 3.20 for Open3D 0.18.0 version
 # Please refer to 'https://apt.kitware.com/'
 $SUDO apt-get install ca-certificates gpg wget -y
