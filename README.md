@@ -148,3 +148,12 @@ If you have any questions, please do not hesitate to contact us
 
 [sjlink]: https://github.com/seungjae24
 [htlink]: https://github.com/LimHyungTae
+
+
+---
+
+## Todo List
+- [ ] Support intensity for RNR in `master` branch
+- [ ] Support `Patchwork` mode for users who use this repository for baseline comparison purposes
+- [ ] Integrate TBB and optimize the performance
+
