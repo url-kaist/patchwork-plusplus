@@ -1,35 +1,27 @@
 <div align="center">
     <h1>Patchwork++</h1>
-    <a href="https://github.com/PRBonn/kiss-icp/releases"><img src="https://img.shields.io/github/v/release/PRBonn/kiss-icp?label=version" /></a>
-    <a href="https://github.com/PRBonn/kiss-icp/blob/main/LICENSE"><img src="pictures/gpl.svg" /></a>
-    <a href="https://github.com/PRBonn/kiss-icp/blob/main/"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/patchworkpp"><img src="https://img.shields.io/badge/-C++-blue?logo=cplusplus" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Python-3670A0?logo=python&logoColor=ffdd54" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/ros"><img src="https://img.shields.io/badge/ROS2-Humble-blue" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black" /></a>
+    <a href="https://ieeexplore.ieee.org/document/9981561"><img src="https://img.shields.io/badge/DOI-10.1109/IROS47612.2022.9981561-004088.svg"/>
     <br />
     <br />
-    <a href=https://user-images.githubusercontent.com/21349875/219626075-d67e9165-31a2-4a1b-8c26-9f04e7d195ec.mp4>Video</a>
+    <a href=https://www.youtube.com/watch?v=fogCM159GRk>Video</a>
     <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://github.com/PRBonn/kiss-icp/blob/main/README.md#Install">Install</a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/README.md###Python">Install</a>
     <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://github.com/PRBonn/kiss-icp/blob/main/ros">ROS 2</a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/ros">ROS2</a>
     <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href=https://www.ipb.uni-bonn.de/wp-content/papercite-data/pdf/vizzo2023ral.pdf>Paper</a>
+    <a href=https://www.youtube.com/watch?v=fogCM159GRk>Paper</a>
     <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href=https://github.com/PRBonn/kiss-icp/issues>Contact Us</a>
+    <a href=https://github.com/url-kaist/patchwork-plusplus/issues>Contact Us</a>
   <br />
   <br />
   <p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
+
+  [Patchwork++][arXivlink], an extension of [Patchwork][patchworklink], is **a fast, robust, and self-adaptive ground segmentation algorithm** on 3D point cloud.
 </div>
-
-
-## :bookmark_tabs: About Patchwork++ (IROS'22)
-
-* A fast, robust, and self-adaptive **ground segmentation algorithm** on 3D point cloud.
-
-* An extension of [Patchwork][patchworklink] (RA-L'21 with IROS'21).
-* Please refer our [paper][patchworkppIEEElink] for detailed explanantions and experimental results!
-
-   * Validated on [SemanticKITTI][SemanticKITTIlink] dataset. The benchmark code is available on [here][benchmarklink].
-
-* :bulb: Contents: [YouTube][YouTubeLink], [arXiv][arXivlink], [IEEE *Xplore*][patchworkppIEEElink]
 
 [YouTubeLInk]: https://www.youtube.com/watch?v=fogCM159GRk
 [arXivlink]: https://arxiv.org/abs/2207.11919
@@ -43,7 +35,7 @@
 * Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
 * Examples codes, which visualizes a ground segmentation result by Patchwork++ ([examples][examplelink]) :thumbsup:
 
-> If you are familiar with ROS, you can also visit [here][roslink] and try executing ROS-based Patchwork++!
+> If you are familiar with ROS1, you can also visit [here][roslink] and try executing ROS1-based Patchwork++!
 
 [roslink]: https://github.com/url-kaist/patchwork-plusplus-ros
 
