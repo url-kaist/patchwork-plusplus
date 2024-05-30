@@ -45,17 +45,17 @@
 [examplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/examples
 
 ## :package: Prerequisite packages
-> You may need to install Eigen, numpy, and Open3D. Open3D is used for point cloud visualization.
 
-```bash
-# Install prerequisite packages including Open3D
-$ git clone https://github.com/url-kaist/patchwork-plusplus
-$ cd patchwork-plusplus
-$ bash scripts/install_open3d.bash
-```
+> [!WARNING]  
+> Please check your cmake version via `cmake --version`. If it is lower than 3.20, please run `scripts/install_latest_cmake.bash` as follows:
+> 
+> $ bash scripts/install_latest_cmake.bash
+> 
+> In addition, you may need to install Eigen, numpy, and Open3D (optional). Open3D is used for point cloud visualization.
+
 
 <details>
-<summary> Manual Installation line-by-line </summary>
+<summary> Step-by-Step Installation Guide for Beginners </summary>
 
 ```bash
 # To install Eigen and numpy
@@ -77,54 +77,24 @@ $ sudo make install
 
 </details>
 
-## :gear: How to build
+## :gear: How to build & Run
 > Please follow below codes to build Patchwork++.
 
-### Python
-```bash
-# in patchwork-plusplus directory
-$ cd python && pip install . 
-```
-
-### C++
-```bash
-# in patchwork-plusplus directory
-$ mkdir cpp/build && cd cpp/build
-$ cmake ..
-$ make
-```
-
-## :runner: To run the demo codes
-> There are some example codes for your convenience!
-> Please try using Patchwork++ to segment ground points in a 3D point cloud :smiley:
 
 ### Python
 ```bash
-# Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ python examples/demo_visualize.py
-
-# Run patchwork++ with sequential point cloud inputs 
-$ python examples/demo_sequential.py
+make pyinstall
 ```
+
+Detailed installation instructions and how to run the demo are explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/python).
 
 ### C++
+
 ```bash
-# Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ ./examples/demo_visualize
-
-# Run patchwork++ with sequential point cloud inputs 
-$ ./examples/demo_sequential
-
-# Run patchwork++ with your point cloud file, example here
-$ ./examples/demo_visualize ./data/000000.bin # specify file path
+make cppinstall
 ```
 
-### Demo Result
-If you execute Patchwork++ with given demo codes well, you can get the following result!
-
-It is a ground segmentation result of data/000000.bin file using Open3D visualization. (Ground : Green, Nonground : Red)
-
-![Open3D Visualization of "data/000000.bin"](pictures/demo_000000.png)
+Detailed installation instructions and how to run the demo are explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
 
 ## :pencil: Citation
 If you use our codes, please cite our paper ([arXiv][arXivLink], [IEEE *Xplore*][patchworkppIEEElink])
