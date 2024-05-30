@@ -34,8 +34,9 @@
 
 You should not need any extra dependency, just clone and build:
 
-```sh
+```commandline
 mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
 git clone https://github.com/url-kaist/patchwork-plusplus.git
 cd ~/ros2_ws
 colcon build --packages-select patchworkpp

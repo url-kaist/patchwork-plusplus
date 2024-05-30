@@ -33,16 +33,19 @@
 
 * C++ source code of Patchwork++ ([patchworkpp][sourcecodelink])
 * Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
-* Examples codes, which visualizes a ground segmentation result by Patchwork++ ([examples][examplelink]) :thumbsup:
+* Examples codes of [C++][cppexamplelink], [Python][pyexamplelink], and [ROS2][rosexamplelink] :thumbsup:
 
 > If you are familiar with ROS1, you can also visit [here][roslink] and try executing ROS1-based Patchwork++!
 
 [roslink]: https://github.com/url-kaist/patchwork-plusplus-ros
 
-[sourcecodelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/patchworkpp
+[sourcecodelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp/patchworkpp
 [pybind11link]: https://github.com/pybind/pybind11
-[wraplink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/python_wrapper
-[examplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/examples
+[wraplink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/python/patchworkpp
+
+[cppexamplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp 
+[pyexamplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/python
+[rosexamplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/ros
 
 ## :package: Prerequisite packages
 > What we need are just minimal dependencies.
@@ -73,7 +76,7 @@ Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
 make pyinstall_with_demo
 ```
 
-How to run Python demos is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/python/README.md#Demo).
+How to run Python demos is explained [here][pyexamplelink].
 
 ### C++
 
@@ -91,19 +94,22 @@ Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
 make cppinstall_with_demo
 ```
 
-How to run the C++ demos is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
+How to run the C++ demos is explained [here][cppexamplelink].
 
 ### ROS2
 
 You should not need any extra dependency, just clone and build:
 
 ```commandline
-cd colcon_ws/src && git clone 
-cd ../../
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+git clone https://github.com/url-kaist/patchwork-plusplus.git
+cd ~/ros2_ws
 colcon build --packages-select patchworkpp
+source ./install/setup.bash 
 ```
 
-How to launch ROS2 nodes is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
+How to launch ROS2 nodes is explained [here][rosexamplelink].
 
 
 ## :pencil: Citation
