@@ -121,7 +121,7 @@ inline void FillPointCloud2XYZ(const Eigen::MatrixX3f &points, PointCloud2 &msg)
   sensor_msgs::PointCloud2Iterator<float> msg_x(msg, "x");
   sensor_msgs::PointCloud2Iterator<float> msg_y(msg, "y");
   sensor_msgs::PointCloud2Iterator<float> msg_z(msg, "z");
-  for (size_t                             i = 0; i < points.size(); ++i, ++msg_x, ++msg_y, ++msg_z) {
+  for (size_t                             i = 0; i < points.rows(); ++i, ++msg_x, ++msg_y, ++msg_z) {
     *msg_x = points(i, 0);
     *msg_y = points(i, 1);
     *msg_z = points(i, 2);
