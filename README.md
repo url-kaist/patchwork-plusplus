@@ -45,56 +45,66 @@
 [examplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/examples
 
 ## :package: Prerequisite packages
+> What we need are just minimal dependencies.
 
-> [!WARNING]  
-> Please check your cmake version via `cmake --version`. If it is lower than 3.20, please run `scripts/install_latest_cmake.bash` as follows:
-> 
-> $ bash scripts/install_latest_cmake.bash
-> 
-> In addition, you may need to install Eigen, numpy, and Open3D (optional). Open3D is used for point cloud visualization.
-
-
-<details>
-<summary> Step-by-Step Installation Guide for Beginners </summary>
-
-```bash
-# To install Eigen and numpy
-$ sudo apt-get install libeigen3-dev
-$ pip install numpy
-
-# To install Open3D Python packages
-$ pip install open3d
-
-# To install Open3D C++ packages
-$ git clone https://github.com/isl-org/Open3D
-$ cd Open3D
-$ util/install_deps_ubuntu.sh # Only needed for Ubuntu
-$ mkdir build && cd build
-$ cmake ..
-$ make # If it fails, try several times or try 'sudo make'
-$ sudo make install
+```commandline
+sudo apt-get install g++ build-essential libeigen3-dev python3-pip python3-dev cmake -y
 ```
 
 </details>
 
 ## :gear: How to build & Run
-> Please follow below codes to build Patchwork++.
-
 
 ### Python
-```bash
+
+**Pure installation**
+
+```commandline
 make pyinstall
 ```
 
-Detailed installation instructions and how to run the demo are explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/python).
+Then, you can use Patchwork++ by `import pypatchworkpp`, which is super simple!
+
+**Installation to run demo**
+
+Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
+
+```commandline
+make pyinstall_with_demo
+```
+
+How to run Python demos is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/python/README.md#Demo).
 
 ### C++
 
-```bash
+**Pure installation**
+
+```commandline
 make cppinstall
 ```
 
-Detailed installation instructions and how to run the demo are explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
+**Installation with demo**
+
+Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
+
+```commandline
+make cppinstall_with_demo
+```
+
+How to run the C++ demos is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
+
+### ROS2
+
+You should not need any extra dependency, just clone and build:
+
+```commandline
+cd colcon_ws/src && git clone 
+cd ../../
+colcon build --packages-select patchworkpp
+```
+
+How to launch ROS2 nodes is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
+
 
 ## :pencil: Citation
 If you use our codes, please cite our paper ([arXiv][arXivLink], [IEEE *Xplore*][patchworkppIEEElink])

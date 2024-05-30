@@ -20,7 +20,7 @@
   <br />
   <p align="center"><img src=../pictures/patchwork++.gif alt="animated" /></p>
 
-[Patchwork++][arXivlink], an extension of [Patchwork][patchworklink], is **a fast, robust, and self-adaptive ground segmentation algorithm** on 3D point cloud.
+  [Patchwork++][arXivlink], an extension of [Patchwork][patchworklink], is **a fast, robust, and self-adaptive ground segmentation algorithm** on 3D point cloud.
 </div>
 
 [arXivlink]: https://arxiv.org/abs/2207.11919
@@ -28,33 +28,25 @@
 
 ---
 
-# Patchwork++ ROS2 Wrapper
+# Patchwork++ in Python
 
-### How to build
+## :runner: To run the demo codes
+> There are some example codes for your convenience!
+> Please try using Patchwork++ to segment ground points in a 3D point cloud :smiley:
 
-You should not need any extra dependency, just clone and build:
-
-```sh
-git clone https://github.com/url-kaist/patchwork-plusplus.git
-colcon build --packages-select patchworkpp
-source ./install/setup.bash 
+* Example 1. Run patchwork++ and visualize ground points (green) and non-ground points (red)
+```commandline
+python python/examples/demo_visualize.py
 ```
 
-### How to run
-
-The only required argument to provide is the **topic name** so Patchwork++ knows which PointCloud2 to process:
-
-```sh
-ros2 launch patchworkpp.launch.py visualize:=false use_sim_time:=true topic:=/lexus3/os_center/points base_frame:=lexus3/os_center_a_laser_data_frame
+* Example 2. Run patchwork++ with sequential point cloud inputs 
+```commandline
+python python/examples/demo_sequential.py
 ```
 
-and then,
+### Demo Result
+If you execute Patchwork++ with given demo codes well, you can get the following result!
 
-```
-ros2 bag play lexus3-2024-04-05-gyor.mcap --loop
-```
+It is a ground segmentation result of data/000000.bin file using Open3D visualization. (Ground : Green, Nonground : Red)
 
-```sh
-rviz2 -d patchworkpp.rviz
-```
-
+![Open3D Visualization of "data/000000.bin"](../pictures/demo_000000.png)
