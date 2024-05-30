@@ -35,26 +35,37 @@
 You should not need any extra dependency, just clone and build:
 
 ```sh
+mkdir -p ~/ros2_ws/src
 git clone https://github.com/url-kaist/patchwork-plusplus.git
+cd ~/ros2_ws
 colcon build --packages-select patchworkpp
 source ./install/setup.bash 
 ```
 
-### How to run
+## :runner: To run the demo codes
+There is a demo that executes Patchwork++ with a sample rosbag2 (mcap) file. You can download a sample file using the following command.
+
+> [!TIP]
+> Please install mcap library as follows:
+> 
+> sudo apt install ros-humble-rosbag2-storage-mcap
+> 
+> Then, download a sample dataset for ros2: [mcap file download [~540MB] ](https://laesze-my.sharepoint.com/:u:/g/personal/herno_o365_sze_hu/Eclwzn42FS9GunGay5LPq-EBA6U1dZseBFNDrr6P0MwB2w?download=1)
+
 
 The only required argument to provide is the **topic name** so Patchwork++ knows which PointCloud2 to process:
 
 ```sh
-ros2 launch patchworkpp.launch.py visualize:=false use_sim_time:=true topic:=/lexus3/os_center/points base_frame:=lexus3/os_center_a_laser_data_frame
+ros2 launch patchworkpp patchworkpp.launch.py visualize:=true use_sim_time:=true cloud_topic:=/lexus3/os_center/points base_frame:=lexus3/os_center_a_laser_data_frame
 ```
 
-and then,
+and then, play rosbag as follows:
 
 ```
 ros2 bag play lexus3-2024-04-05-gyor.mcap --loop
 ```
 
-```sh
-rviz2 -d patchworkpp.rviz
-```
+Consequently, we can see the results in Rviz:
+
+![img](../pictures/patchwork2_in_ros2.gif)
 
