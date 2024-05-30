@@ -43,6 +43,9 @@ GroundSegmentationServer::GroundSegmentationServer(const rclcpp::NodeOptions &op
 
   params.verbose = get_parameter<bool>("verbose", params.verbose);
 
+  // ToDo. Support intensity
+  params.enable_RNR = false;
+
   // Construct the main Patchwork++ node
   Patchworkpp_ = std::make_unique<patchwork::PatchWorkpp>(params);
 

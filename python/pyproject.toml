@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "pypatchworkpp"
-version = "0.0.1"
+version = "0.1.0"
 requires-python = ">=3.8"
 description = "ground segmentation"
 dependencies = [

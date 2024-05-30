@@ -45,86 +45,66 @@
 [examplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/examples
 
 ## :package: Prerequisite packages
-> You may need to install Eigen, numpy, and Open3D. Open3D is used for point cloud visualization.
+> What we need are just minimal dependencies.
 
-```bash
-# Install prerequisite packages including Open3D
-$ git clone https://github.com/url-kaist/patchwork-plusplus
-$ cd patchwork-plusplus
-$ bash scripts/install_open3d.bash
-```
-
-<details>
-<summary> Manual Installation line-by-line </summary>
-
-```bash
-# To install Eigen and numpy
-$ sudo apt-get install libeigen3-dev
-$ pip install numpy
-
-# To install Open3D Python packages
-$ pip install open3d
-
-# To install Open3D C++ packages
-$ git clone https://github.com/isl-org/Open3D
-$ cd Open3D
-$ util/install_deps_ubuntu.sh # Only needed for Ubuntu
-$ mkdir build && cd build
-$ cmake ..
-$ make # If it fails, try several times or try 'sudo make'
-$ sudo make install
+```commandline
+sudo apt-get install g++ build-essential libeigen3-dev python3-pip python3-dev cmake -y
 ```
 
 </details>
 
-## :gear: How to build
-> Please follow below codes to build Patchwork++.
+## :gear: How to build & Run
 
 ### Python
-```bash
-# in patchwork-plusplus directory
-$ cd python && pip install . 
+
+**Pure installation**
+
+```commandline
+make pyinstall
 ```
+
+Then, you can use Patchwork++ by `import pypatchworkpp`, which is super simple!
+
+**Installation to run demo**
+
+Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
+
+```commandline
+make pyinstall_with_demo
+```
+
+How to run Python demos is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/python/README.md#Demo).
 
 ### C++
-```bash
-# in patchwork-plusplus directory
-$ mkdir cpp/build && cd cpp/build
-$ cmake ..
-$ make
+
+**Pure installation**
+
+```commandline
+make cppinstall
 ```
 
-## :runner: To run the demo codes
-> There are some example codes for your convenience!
-> Please try using Patchwork++ to segment ground points in a 3D point cloud :smiley:
+**Installation with demo**
 
-### Python
-```bash
-# Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ python examples/demo_visualize.py
+Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
 
-# Run patchwork++ with sequential point cloud inputs 
-$ python examples/demo_sequential.py
+```commandline
+make cppinstall_with_demo
 ```
 
-### C++
-```bash
-# Run patchwork++ and visualize ground points(green) and nonground points(red)
-$ ./examples/demo_visualize
+How to run the C++ demos is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
 
-# Run patchwork++ with sequential point cloud inputs 
-$ ./examples/demo_sequential
+### ROS2
 
-# Run patchwork++ with your point cloud file, example here
-$ ./examples/demo_visualize ./data/000000.bin # specify file path
+You should not need any extra dependency, just clone and build:
+
+```commandline
+cd colcon_ws/src && git clone 
+cd ../../
+colcon build --packages-select patchworkpp
 ```
 
-### Demo Result
-If you execute Patchwork++ with given demo codes well, you can get the following result!
+How to launch ROS2 nodes is explained [here](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp).
 
-It is a ground segmentation result of data/000000.bin file using Open3D visualization. (Ground : Green, Nonground : Red)
-
-![Open3D Visualization of "data/000000.bin"](pictures/demo_000000.png)
 
 ## :pencil: Citation
 If you use our codes, please cite our paper ([arXiv][arXivLink], [IEEE *Xplore*][patchworkppIEEElink])
@@ -168,3 +148,12 @@ If you have any questions, please do not hesitate to contact us
 
 [sjlink]: https://github.com/seungjae24
 [htlink]: https://github.com/LimHyungTae
+
+
+---
+
+## Todo List
+- [ ] Support intensity for RNR in `master` branch
+- [ ] Support `Patchwork` mode for users who use this repository for baseline comparison purposes
+- [ ] Integrate TBB and optimize the performance
+
