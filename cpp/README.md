@@ -39,13 +39,13 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make -j 16
 ```
 
-If you want to run demo, just run
+If you want to **run demo**, just run the following command in the top-level directory as follows:
 
 ```commandline
 make cppinstall_with_demo
 ```
 
-in the top-level directory, or 
+, or 
 
 ```commandline
 # in patchwork-plusplus directory
