@@ -1,4 +1,4 @@
-#include "patchworkpp.h"
+#include "patchwork/patchworkpp.h"
 
 using namespace std;
 using namespace patchwork;

@@ -1,5 +1,5 @@
 // Patchwork++
-#include "patchworkpp.h"
+#include "patchwork/patchworkpp.h"
 
 // ROS 2
 #include <rclcpp/rclcpp.hpp>
