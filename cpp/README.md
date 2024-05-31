@@ -58,6 +58,19 @@ $ make -j 16
 > Please check your cmake version via `cmake --version`.
 > If it is lower than 3.20, it is automatically updated by `scripts/install_latest_cmake.bash` (see [here](https://github.com/url-kaist/patchwork-plusplus/blob/master/cpp/CMakeLists.txt#L31)).
 
+### sudo make install
+
+Interestingly, our repository also supports `sudo make install`.
+After the build, go to `cpp/build` directory and then just run
+
+```commandline
+sudo make install
+```
+
+Consequently, our Patchwork++ is installed in your local environment.
+An example of finding the `patchworkpp` package in another package is also provided in [example_of_find_package](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp/example_of_find_package)
+
+
 ## :runner: To run the demo codes
 > There are some example codes for your convenience!
 > Please try using Patchwork++ to segment ground points in a 3D point cloud :smiley:
