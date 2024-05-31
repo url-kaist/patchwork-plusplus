@@ -39,13 +39,13 @@ $ cmake -DCMAKE_BUILD_TYPE=Release ..
 $ make -j 16
 ```
 
-If you want to run demo, just run
+If you want to **run demo**, just run the following command in the top-level directory as follows:
 
 ```commandline
 make cppinstall_with_demo
 ```
 
-in the top-level directory, or 
+, or 
 
 ```commandline
 # in patchwork-plusplus directory
@@ -57,6 +57,19 @@ $ make -j 16
 > [!WARNING]  
 > Please check your cmake version via `cmake --version`.
 > If it is lower than 3.20, it is automatically updated by `scripts/install_latest_cmake.bash` (see [here](https://github.com/url-kaist/patchwork-plusplus/blob/master/cpp/CMakeLists.txt#L31)).
+
+### sudo make install
+
+Interestingly, our repository also supports `sudo make install`.
+After the build, go to `cpp/build` directory and then just run
+
+```commandline
+sudo make install
+```
+
+Consequently, our Patchwork++ is installed in your local environment.
+An example of finding the `patchworkpp` package in another package is also provided in [example_of_find_package](https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp/example_of_find_package)
+
 
 ## :runner: To run the demo codes
 > There are some example codes for your convenience!
