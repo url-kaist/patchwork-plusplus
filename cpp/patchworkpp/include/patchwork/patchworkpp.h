@@ -194,8 +194,8 @@ private:
 
     vector<PointXYZ> centers_, normals_;
 
-    Eigen::MatrixX3f toEigenCloud(vector<PointXYZ> cloud);
-    Eigen::VectorXi toIndices(vector<PointXYZ> cloud);
+    Eigen::MatrixX3f toEigenCloud(const vector<PointXYZ> &cloud);
+    Eigen::VectorXi toIndices(const vector<PointXYZ> &cloud);
 
     void addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add);
     
