@@ -1,4 +1,4 @@
-#include <patchworkpp.h>
+#include <patchwork/patchworkpp.h>
 
 #include <iostream>
 #include <fstream>
