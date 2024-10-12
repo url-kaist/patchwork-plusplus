@@ -5,8 +5,8 @@ using namespace patchwork;
 
 bool point_z_cmp(PointXYZ a, PointXYZ b) { return a.z < b.z; }
 
-Eigen::MatrixX3f PatchWorkpp::toEigenCloud(vector<PointXYZ> cloud)
-{
+Eigen::MatrixX3f PatchWorkpp::toEigenCloud(const vector<PointXYZ> &cloud) {
+
     Eigen::MatrixX3f dst(cloud.size(), 3);
     int j=0;
     for (auto &p: cloud) {
@@ -15,8 +15,8 @@ Eigen::MatrixX3f PatchWorkpp::toEigenCloud(vector<PointXYZ> cloud)
     return dst;
 }
 
-Eigen::VectorXi PatchWorkpp::toIndices(vector<PointXYZ> cloud)
-{
+Eigen::VectorXi PatchWorkpp::toIndices(const vector<PointXYZ> &cloud) {
+
     Eigen::VectorXi dst(cloud.size());
     int j = 0;
     for (auto &p: cloud) {
@@ -25,8 +25,8 @@ Eigen::VectorXi PatchWorkpp::toIndices(vector<PointXYZ> cloud)
     return dst;
 }
 
-void PatchWorkpp::addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add)
-{
+void PatchWorkpp::addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add) {
+
     cloud.insert(cloud.end(), add.begin(), add.end());
 }
 
