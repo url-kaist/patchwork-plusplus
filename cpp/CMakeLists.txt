@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.11)
-project(patchworkpp VERSION 1.0.0)
+project(patchworkpp VERSION 1.0.1)
 
 set(CMAKE_CXX_STANDARD 20)
 set(PYTHON_EXECUTABLE python3)
 set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Open3D_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Open3D_CXX_FLAGS}")

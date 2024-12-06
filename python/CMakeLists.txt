@@ -15,6 +15,11 @@ set(TARGET_NAME ground_seg_cores)
 find_package(Python COMPONENTS Interpreter Development.Module REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 
+# See our `pyproject.toml` file. We use `scikit_build_core`, which turns on `SKBUILD`
+if (DEFINED SKBUILD)
+    message(STATUS "Building with Scikit-Build")
+endif ()
+
 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/../cpp/)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../cpp ${CMAKE_CURRENT_BINARY_DIR}/patchworkpp_cpp)
 else()
