@@ -3,9 +3,6 @@ project(patchworkpp_src)
 include(GNUInstallDirs)
 
 message("Parent project name: " ${PARENT_PROJECT_NAME})
-
-find_package(Eigen3 REQUIRED QUIET)
-
 add_library(${TARGET_NAME} STATIC src/patchworkpp.cpp)
 set_target_properties(${TARGET_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
