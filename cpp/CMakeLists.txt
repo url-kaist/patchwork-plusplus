@@ -59,5 +59,4 @@ if (INCLUDE_CPP_EXAMPLES)
   target_link_libraries(demo_sequential PRIVATE ${PARENT_PROJECT_NAME}::${TARGET_NAME} ${Open3D_LIBRARIES} "stdc++fs")
   target_include_directories(demo_sequential PUBLIC ${Open3D_INCLUDE_DIRS})
   set_target_properties(demo_sequential PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/examples")
-
 endif()
