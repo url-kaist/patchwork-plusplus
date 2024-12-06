@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.11)
 project(patchworkpp VERSION 1.0.1)
 
+option(USE_SYSTEM_EIGEN3 "Use system pre-installed Eigen" OFF)
+option(INCLUDE_CPP_EXAMPLES "Include C++ example codes, which require Open3D for visualization" OFF)
+
 set(CMAKE_CXX_STANDARD 20)
 set(PYTHON_EXECUTABLE python3)
 set(CMAKE_BUILD_TYPE Release)
@@ -10,14 +13,32 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${Open3D_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Open3D_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${Open3D_EXE_LINKER_FLAGS}")
 
-if(CMAKE_VERSION VERSION_LESS "3.15")
+if(CMAKE_VERSION VERSION_LESS 3.15)
   include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/ListPrepend.cmake")
   list_prepend(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 else()
   list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 endif()
 
-option(INCLUDE_CPP_EXAMPLES "Include C++ example codes, which require Open3D for visualization" OFF)
+if(CMAKE_VERSION VERSION_GREATER 3.24)
+  cmake_policy(SET CMP0135 OLD)
+endif()
+
+# Originally, below code was from `find_dependencies.cmake`
+# The below code is to make dependency of Eigen free
+function(find_external_dependency PACKAGE_NAME TARGET_NAME INCLUDED_CMAKE_PATH)
+  string(TOUPPER ${PACKAGE_NAME} PACKAGE_NAME_UP)
+  set(USE_FROM_SYSTEM_OPTION "USE_SYSTEM_${PACKAGE_NAME_UP}")
+  if(${${USE_FROM_SYSTEM_OPTION}})
+    find_package(${PACKAGE_NAME} QUIET NO_MODULE)
+  endif()
+  if(NOT ${${USE_FROM_SYSTEM_OPTION}} OR NOT TARGET ${TARGET_NAME})
+    set(${USE_FROM_SYSTEM_OPTION} OFF PARENT_SCOPE)
+    include(${INCLUDED_CMAKE_PATH})
+  endif()
+endfunction()
+
+find_external_dependency("Eigen3" "Eigen3::Eigen" "${CMAKE_CURRENT_LIST_DIR}/cmake/eigen.cmake")
 
 # Parameters in `patchworkpp` subdirectory.
 # Thus, link should be `patchworkpp::ground_seg_cores`
