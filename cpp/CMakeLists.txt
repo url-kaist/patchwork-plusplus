@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(patchworkpp VERSION 1.0.1)
+project(patchworkpp VERSION 1.0.2)
 
 option(USE_SYSTEM_EIGEN3 "Use system pre-installed Eigen" OFF)
 option(INCLUDE_CPP_EXAMPLES "Include C++ example codes, which require Open3D for visualization" OFF)
