@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11)
 project(patchworkpp VERSION 1.0.1)
 
+option(INCLUDE_CPP_EXAMPLES "Include C++ example codes, which require Open3D for visualization" OFF)
+
 set(CMAKE_CXX_STANDARD 20)
 set(PYTHON_EXECUTABLE python3)
 set(CMAKE_BUILD_TYPE Release)
@@ -17,7 +19,6 @@ else()
   list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 endif()
 
-option(INCLUDE_CPP_EXAMPLES "Include C++ example codes, which require Open3D for visualization" OFF)
 
 # Parameters in `patchworkpp` subdirectory.
 # Thus, link should be `patchworkpp::ground_seg_cores`
