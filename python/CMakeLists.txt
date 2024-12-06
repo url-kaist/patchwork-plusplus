@@ -28,7 +28,7 @@ else()
   include(FetchContent)
   FetchContent_Declare(
     ext_ground_seg_cores PREFIX ${PARENT_PROJECT_NAME}
-    URL https://github.com/url-kaist/patchwork-plusplus/archive/refs/tags/v1.0.tar.gz SOURCE_SUBDIR
+    URL https://github.com/url-kaist/patchwork-plusplus/archive/refs/tags/v${CMAKE_PROJECT_VERSION}.tar.gz SOURCE_SUBDIR
         cpp/patchworkpp)
   FetchContent_MakeAvailable(ext_ground_seg_cores)
 endif()
