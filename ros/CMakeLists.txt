@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16...3.26)
-project(patchworkpp VERSION 0.4.0 LANGUAGES CXX)
+project(patchworkpp VERSION 1.0.4 LANGUAGES CXX)
 
 set(ignore ${CATKIN_INSTALL_INTO_PREFIX_ROOT})
 set(CMAKE_BUILD_TYPE Release)
