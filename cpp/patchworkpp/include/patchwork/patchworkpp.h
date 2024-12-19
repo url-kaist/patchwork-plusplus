@@ -176,10 +176,10 @@ private:
 
     double d_;
 
-    Eigen::VectorXf normal_;
-    Eigen::VectorXf singular_values_;
+    Eigen::Vector3f normal_;
+    Eigen::Vector2f singular_values_;
     Eigen::Matrix3f cov_;
-    Eigen::VectorXf pc_mean_;
+    Eigen::Vector3f pc_mean_;
 
     vector<double> min_ranges_;
     vector<double> sector_sizes_;
