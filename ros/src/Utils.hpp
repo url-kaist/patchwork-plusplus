@@ -189,7 +189,7 @@ inline std::unique_ptr<PointCloud2> EigenToPointCloud2(const std::vector<Eigen::
 
 inline std::unique_ptr<PointCloud2> EigenMatToPointCloud2(const Eigen::MatrixX3f &points,
                                                           const Header &header) {
-  auto msg = CreatePointCloud2Msg(points.size(), header);
+  auto msg = CreatePointCloud2Msg(points.rows(), header);
   FillPointCloud2XYZ(points, *msg);
   return msg;
 }
