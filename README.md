@@ -41,6 +41,7 @@
 - C++ source code of Patchwork++ ([patchworkpp][sourcecodelink])
 - Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
 - Examples codes of [C++][cppexamplelink], [Python][pyexamplelink], and [ROS2][rosexamplelink] :thumbsup:
+- A transparent, reproducible **SemanticKITTI evaluation harness** for both Patchwork and Patchwork++ ([`python/examples/evaluate_semantickitti.py`][evallink]). The two algorithms use **different evaluation protocols** — the original Patchwork paper counts low-z vegetation as ground while the Patchwork++ paper excludes vegetation entirely (Sec. IV.A), because the SemanticKITTI `vegetation` label mixes spurious leaves/branches with low ground cover and a single ground/non-ground choice is impractical. The script supports both protocols via `--eval_protocol {patchwork, patchworkpp}` and reproduces each paper's Table I within ±0.2 F1; see [`USAGE.md`][usagelink] §1 and §4 for the full reasoning and per-sequence numbers.
 
 > If you are familiar with ROS1, you can also visit [here][roslink] and try executing ROS1-based Patchwork++!
 
@@ -135,9 +136,13 @@ pp_default = p.patchworkpp(p.Parameters())          # Patchwork++
 pp_classic = p.patchwork(p.PatchworkParams())       # Patchwork (classic)
 ```
 
-**ROS2:**
+**ROS2:** Patchwork++ is the default; pass `algorithm:=patchwork` to switch to the classic Patchwork.
 
 ```bash
+# Default — runs Patchwork++
+ros2 launch patchworkpp patchworkpp.launch.py
+
+# Override to the classic Patchwork
 ros2 launch patchworkpp patchworkpp.launch.py algorithm:=patchwork
 ```
 
@@ -193,6 +198,7 @@ ______________________________________________________________________
 
 [arxivlink]: https://arxiv.org/abs/2207.11919
 [cppexamplelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp
+[evallink]: python/examples/evaluate_semantickitti.py
 [htlink]: https://github.com/LimHyungTae
 [patchworkarxivlink]: https://arxiv.org/abs/2108.05560
 [patchworkieeelink]: https://ieeexplore.ieee.org/document/9466396
@@ -203,4 +209,5 @@ ______________________________________________________________________
 [roslink]: https://github.com/url-kaist/patchwork-plusplus-ros
 [sjlink]: https://github.com/seungjae24
 [sourcecodelink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/cpp/patchworkpp
+[usagelink]: USAGE.md
 [wraplink]: https://github.com/url-kaist/patchwork-plusplus/tree/master/python/patchworkpp
