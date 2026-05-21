@@ -14,6 +14,15 @@ ______________________________________________________________________
 
 The Patchwork and Patchwork++ papers use **different** ground-truth definitions on SemanticKITTI. The eval driver `python/examples/evaluate_semantickitti.py` supports both via `--eval_protocol {patchwork, patchworkpp}`.
 
+### Why the two papers disagree
+
+The disagreement is concentrated on one class: **`vegetation` (label 70)**. SemanticKITTI's `vegetation` label conflates two visually similar but physically very different things — low ground cover (grass, terrain weeds, leaves on flat ground) and overhead foliage / branches / hedge tops. The first is essentially ground; the second is not.
+
+- The **original Patchwork paper** picked a height-based proxy: `vegetation` points with `z < −1.30 m` w.r.t. the sensor frame count as ground, anything above does not. Simple, but it mislabels overhead foliage in low-mounted sensors and ground vegetation on hills.
+- The **Patchwork++ paper** (Sec. IV.A) treats this as fundamentally unresolvable from labels alone and **excludes** `vegetation` from the evaluation entirely: *"the points labeled as vegetation are not evaluated as ground nor non-ground points exceptionally because it is impractical to regard the vegetation as a single ground or non-ground class"*. The points are still fed to the algorithm — only the scoring drops them.
+
+Either choice is defensible; they just yield different numbers on the same predictions. Always use the protocol that matches the paper you're comparing against.
+
 ### A. `--eval_protocol patchwork`  (original Patchwork repo protocol)
 
 - **Ground GT** = `{ROAD (40), PARKING (44), SIDEWALK (48), OTHER_GROUND (49), LANE_MARKING (60), VEGETATION (70, only if z < −1.30 m), TERRAIN (72)}`

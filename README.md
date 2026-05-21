@@ -41,7 +41,7 @@
 - C++ source code of Patchwork++ ([patchworkpp][sourcecodelink])
 - Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
 - Examples codes of [C++][cppexamplelink], [Python][pyexamplelink], and [ROS2][rosexamplelink] :thumbsup:
-- A transparent, reproducible **SemanticKITTI evaluation harness** for both Patchwork and Patchwork++ ([`python/examples/evaluate_semantickitti.py`][evallink]). The two algorithms use **different evaluation protocols** — the original Patchwork paper counts low-z vegetation as ground while the Patchwork++ paper excludes vegetation entirely (Sec. IV.A), because the SemanticKITTI `vegetation` label mixes spurious leaves/branches with low ground cover and a single ground/non-ground choice is impractical. The script supports both protocols via `--eval_protocol {patchwork, patchworkpp}` and reproduces each paper's Table I within ±0.2 F1; see [`USAGE.md`][usagelink] §1 and §4 for the full reasoning and per-sequence numbers.
+- A reproducible **SemanticKITTI evaluation harness** for both Patchwork and Patchwork++ ([`python/examples/evaluate_semantickitti.py`][evallink]). The two algorithms use **different evaluation protocols** (Patchwork paper vs Patchwork++ paper Sec. IV.A) — see [`USAGE.md`][usagelink] §1 for why and §4 for per-sequence numbers.
 
 > If you are familiar with ROS1, you can also visit [here][roslink] and try executing ROS1-based Patchwork++!
 
