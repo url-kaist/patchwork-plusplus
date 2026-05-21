@@ -41,7 +41,7 @@
 - C++ source code of Patchwork++ ([patchworkpp][sourcecodelink])
 - Python binding of Patchwork++ using pybind11 ([python_wrapper][wraplink])
 - Examples codes of [C++][cppexamplelink], [Python][pyexamplelink], and [ROS2][rosexamplelink] :thumbsup:
-- A reproducible **SemanticKITTI evaluation harness** for both Patchwork and Patchwork++ ([`python/examples/evaluate_semantickitti.py`][evallink]). The two algorithms use **different evaluation protocols** (Patchwork paper vs Patchwork++ paper Sec. IV.A) — see [`USAGE.md`][usagelink] §1 for why and §4 for per-sequence numbers.
+- Full suppor of a reproducible **SemanticKITTI evaluation harness** for both Patchwork and Patchwork++ ([`python/examples/evaluate_semantickitti.py`][evallink]). In the papers of Patchwork and Patchwork++, we use **different evaluation protocols** — see [`USAGE.md`][usagelink] §1 for why and §4 for per-sequence numbers.
 
 > If you are familiar with ROS1, you can also visit [here][roslink] and try executing ROS1-based Patchwork++!
 
