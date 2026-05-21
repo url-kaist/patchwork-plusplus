@@ -1,9 +1,9 @@
 #include "patchwork/patchworkpp.h"
 
+#include "patchwork/plane_fit.h"  // xy2theta, xy2radius, point_z_cmp
+
 using namespace std;
 using namespace patchwork;
-
-bool point_z_cmp(PointXYZ a, PointXYZ b) { return a.z < b.z; }
 
 Eigen::MatrixX3f PatchWorkpp::toEigenCloud(const vector<PointXYZ> &cloud) {
   Eigen::MatrixX3f dst(cloud.size(), 3);
@@ -571,16 +571,6 @@ void PatchWorkpp::calc_mean_stdev(std::vector<double> vec, double &mean, double 
   }
   stdev /= vec.size() - 1;
   stdev = sqrt(stdev);
-}
-
-double PatchWorkpp::xy2theta(const double &x, const double &y) {  // 0 ~ 2 * PI
-  double angle = atan2(y, x);
-  return angle > 0 ? angle : 2 * M_PI + angle;
-}
-
-double PatchWorkpp::xy2radius(const double &x, const double &y) {
-  // return sqrt(pow(x, 2) + pow(y, 2));
-  return sqrt(x * x + y * y);
 }
 
 void PatchWorkpp::pc2czm(const Eigen::MatrixXf &src, std::vector<Zone> &czm) {

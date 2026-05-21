@@ -1,0 +1,25 @@
+project(patchwork_common_src)
+
+include(GNUInstallDirs)
+
+set(COMMON_TARGET ground_seg_common)
+
+add_library(${COMMON_TARGET} STATIC src/plane_fit.cpp)
+set_target_properties(${COMMON_TARGET} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+target_include_directories(${COMMON_TARGET} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
+target_link_libraries(${COMMON_TARGET} Eigen3::Eigen)
+add_library(${PARENT_PROJECT_NAME}::${COMMON_TARGET} ALIAS ${COMMON_TARGET})
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+  DESTINATION include
+)
+install(TARGETS ${COMMON_TARGET}
+  EXPORT ${PARENT_PROJECT_NAME}Config
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)

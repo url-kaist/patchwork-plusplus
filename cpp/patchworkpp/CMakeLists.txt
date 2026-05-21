@@ -11,7 +11,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_link_libraries(${TARGET_NAME} Eigen3::Eigen)
+target_link_libraries(${TARGET_NAME} Eigen3::Eigen ground_seg_common)
 add_library(${PARENT_PROJECT_NAME}::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
@@ -23,7 +23,7 @@ install(TARGETS ${TARGET_NAME}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
-export(TARGETS ${TARGET_NAME}
+export(TARGETS ${TARGET_NAME} ground_seg_common
   NAMESPACE ${PARENT_PROJECT_NAME}::
   FILE "${CMAKE_CURRENT_BINARY_DIR}/${PARENT_PROJECT_NAME}Config.cmake"
 )

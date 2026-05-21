@@ -3,7 +3,10 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <iostream>
 #include <limits>
+
+#include "patchwork/plane_fit.h"
 
 namespace {
 inline Eigen::MatrixX3f to_matrix(const std::vector<patchwork::PointXYZ>& pts) {
@@ -20,13 +23,6 @@ inline Eigen::MatrixX3f to_matrix(const std::vector<patchwork::PointXYZ>& pts) {
 namespace patchwork {
 
 PatchWork::PatchWork(const PatchworkParams& params) : params_(params) {}
-
-double PatchWork::xy2theta(double x, double y) const {
-  double a = std::atan2(y, x);
-  return (a >= 0) ? a : (a + 2 * M_PI);
-}
-
-double PatchWork::xy2radius(double x, double y) const { return std::hypot(x, y); }
 
 void PatchWork::initialize() {
   regionwise_patches_.clear();
@@ -78,36 +74,6 @@ void PatchWork::pc2regionwise_patches(const std::vector<PointXYZ>& src) {
 
     regionwise_patches_[zone][ring][sector].push_back(p);
   }
-}
-
-void PatchWork::estimate_plane(const std::vector<PointXYZ>& seeds, PCAFeature& out) {
-  if (seeds.empty()) return;
-
-  Eigen::MatrixXf pts(seeds.size(), 3);
-  for (size_t i = 0; i < seeds.size(); ++i) {
-    pts(i, 0) = seeds[i].x;
-    pts(i, 1) = seeds[i].y;
-    pts(i, 2) = seeds[i].z;
-  }
-  Eigen::Vector3f mean     = pts.colwise().mean();
-  Eigen::MatrixXf centered = pts.rowwise() - mean.transpose();
-  Eigen::Matrix3f cov =
-      (centered.adjoint() * centered) / std::max<float>(1.0f, static_cast<float>(pts.rows() - 1));
-
-  Eigen::JacobiSVD<Eigen::Matrix3f> svd(cov, Eigen::ComputeFullU);
-  out.normal_ = svd.matrixU().col(2);
-  if (out.normal_(2) < 0) out.normal_ = -out.normal_;
-  out.singular_values_ = svd.singularValues();
-  out.mean_            = mean;
-  out.d_               = -out.normal_.dot(mean);
-  out.th_dist_d_       = static_cast<float>(params_.th_dist) - out.d_;
-
-  const float s0  = out.singular_values_(0);
-  const float s1  = out.singular_values_(1);
-  const float s2  = out.singular_values_(2);
-  const float eps = 1e-12f;
-  out.linearity_  = (s0 - s1) / std::max(s0, eps);
-  out.planarity_  = (s1 - s2) / std::max(s0, eps);
 }
 
 void PatchWork::extract_initial_seeds(int zone_idx,
@@ -206,7 +172,7 @@ void PatchWork::perform_regionwise_segmentation(int zone_idx,
   PCAFeature feature{};
   for (int it = 0; it < params_.num_iter; ++it) {
     if (ground.empty()) break;
-    estimate_plane(ground, feature);
+    estimate_plane(ground, feature, static_cast<float>(params_.th_dist));
 
     ground.clear();
     std::vector<PointXYZ> nonground;
@@ -251,7 +217,8 @@ void PatchWork::perform_regionwise_segmentation(int zone_idx,
         patch_nonground.push_back(p);
     }
     // Estimate plane on seeds so feature is valid for determine_gle_status.
-    if (!patch_ground.empty()) estimate_plane(patch_ground, feature);
+    if (!patch_ground.empty())
+      estimate_plane(patch_ground, feature, static_cast<float>(params_.th_dist));
   }
 
   status_out = determine_gle_status(zone_idx, ring_idx, feature);

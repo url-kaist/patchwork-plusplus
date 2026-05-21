@@ -13,20 +13,13 @@
 
 #include <Eigen/Dense>
 
+#include "patchwork/types.h"  // PointXYZ, PCAFeature, PatchStatus
+
 using namespace std;
 
 #define MAX_POINTS 5000
 
 namespace patchwork {
-
-struct PointXYZ {
-  float x;
-  float y;
-  float z;
-  int idx;
-
-  PointXYZ(float _x, float _y, float _z, int _idx = -1) : x(_x), y(_y), z(_z), idx(_idx) {}
-};
 
 struct RevertCandidate {
   int concentric_idx;
@@ -227,10 +220,8 @@ class PatchWorkpp {
   void update_elevation_thr();
   void update_flatness_thr();
 
-  double xy2theta(const double &x, const double &y);
-
-  double xy2radius(const double &x, const double &y);
-
+  // xy2theta / xy2radius / point_z_cmp now live in patchwork/plane_fit.h
+  // (shared with Patchwork classic).
   void estimate_plane(const vector<PointXYZ> &ground);
 
   void extract_piecewiseground(const int zone_idx,

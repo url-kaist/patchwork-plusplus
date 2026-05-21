@@ -45,6 +45,7 @@ find_external_dependency("Eigen3" "Eigen3::Eigen" "${CMAKE_CURRENT_LIST_DIR}/cma
 set(PARENT_PROJECT_NAME ${PROJECT_NAME})
 set(TARGET_NAME ground_seg_cores)
 
+add_subdirectory(common)
 add_subdirectory(patchworkpp)
 add_subdirectory(patchwork)
 

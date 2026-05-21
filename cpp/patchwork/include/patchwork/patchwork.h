@@ -5,29 +5,9 @@
 
 #include <Eigen/Dense>
 
-#include "patchwork/patchworkpp.h"  // for patchwork::PointXYZ
+#include "patchwork/types.h"  // PointXYZ, PCAFeature, PatchStatus
 
 namespace patchwork {
-
-struct PCAFeature {
-  Eigen::Vector3f normal_;
-  Eigen::Vector3f mean_;
-  Eigen::Vector3f singular_values_;
-  float d_;
-  float th_dist_d_;
-  float linearity_;
-  float planarity_;
-};
-
-enum class PatchStatus {
-  NotAssigned              = -2,
-  FewPoints                = -1,
-  UprightEnough            = 0,
-  FlatEnough               = 1,
-  TooHighElevation         = 2,
-  TooTilted                = 3,
-  GloballyTooHighElevation = 4,
-};
 
 struct PatchworkParams {
   // Sensor / range
@@ -84,13 +64,12 @@ class PatchWork {
   double getHeight() const;
 
  private:
-  // Helper functions (defined in patchwork.cpp in later tasks)
+  // Helper functions
+  // (xy2theta, xy2radius, point_z_cmp, estimate_plane live in
+  //  patchwork/plane_fit.h and are shared with Patchwork++.)
   void initialize();
   void flush();
-  double xy2theta(double x, double y) const;
-  double xy2radius(double x, double y) const;
   void pc2regionwise_patches(const std::vector<PointXYZ>& src);
-  void estimate_plane(const std::vector<PointXYZ>& seeds, PCAFeature& out);
   void extract_initial_seeds(int zone_idx,
                              const std::vector<PointXYZ>& sorted,
                              std::vector<PointXYZ>& seeds);
