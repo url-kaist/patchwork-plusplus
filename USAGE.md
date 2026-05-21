@@ -199,6 +199,86 @@ python python/examples/evaluate_semantickitti.py \
 
 ______________________________________________________________________
 
+## 5. Per-sequence performance
+
+All numbers below are produced by `python/examples/evaluate_semantickitti.py` on v1.3.1 (current `master`), KITTI 00-10, paper-matched parameters. Use them to debug per-sequence regressions: if seq 05 looks fine but seq 10 is 3 F1 below the table, you have a parameter problem, not a code problem.
+
+### `--method patchworkpp --eval_protocol patchworkpp`  (headline configuration, matches Patchwork++ paper)
+
+| seq     | frames    | Precision | Recall    | F1        |
+| ------- | --------- | --------- | --------- | --------- |
+| 00      | 4541      | 94.88     | 98.47     | 96.62     |
+| 01      | 1101      | 98.43     | 96.36     | 97.34     |
+| 02      | 4661      | 95.63     | 97.18     | 96.35     |
+| 03      | 801       | 96.72     | 97.73     | 97.21     |
+| 04      | 271       | 98.20     | 96.40     | 97.25     |
+| 05      | 2761      | 92.06     | 97.87     | 94.84     |
+| 06      | 1101      | 98.01     | 97.24     | 97.61     |
+| 07      | 1101      | 92.89     | 98.45     | 95.56     |
+| 08      | 4071      | 96.29     | 97.26     | 96.74     |
+| 09      | 1591      | 96.01     | 96.25     | 96.06     |
+| 10      | 1201      | 91.93     | 95.63     | 93.63     |
+| **Avg** | **23201** | **95.55** | **97.17** | **96.29** |
+
+### `--method patchwork --eval_protocol patchworkpp`  (classic Patchwork, paper protocol)
+
+| seq     | frames    | Precision | Recall    | F1        |
+| ------- | --------- | --------- | --------- | --------- |
+| 00      | 4541      | 93.61     | 98.97     | 96.19     |
+| 01      | 1101      | 97.47     | 96.80     | 97.09     |
+| 02      | 4661      | 95.26     | 97.11     | 96.11     |
+| 03      | 801       | 96.31     | 98.24     | 97.23     |
+| 04      | 271       | 98.15     | 97.96     | 98.04     |
+| 05      | 2761      | 90.32     | 98.53     | 94.19     |
+| 06      | 1101      | 97.32     | 98.45     | 97.88     |
+| 07      | 1101      | 91.19     | 98.71     | 94.76     |
+| 08      | 4071      | 95.52     | 98.16     | 96.79     |
+| 09      | 1591      | 95.29     | 96.63     | 95.87     |
+| 10      | 1201      | 90.65     | 93.86     | 92.04     |
+| **Avg** | **23201** | **94.64** | **97.58** | **96.02** |
+
+### `--method patchworkpp --eval_protocol patchwork`  (Patchwork++, original-Patchwork protocol)
+
+| seq     | frames    | Precision | Recall    | F1        |
+| ------- | --------- | --------- | --------- | --------- |
+| 00      | 4541      | 93.93     | 93.29     | 93.53     |
+| 01      | 1101      | 97.03     | 87.33     | 91.80     |
+| 02      | 4661      | 93.40     | 93.36     | 93.29     |
+| 03      | 801       | 90.74     | 93.21     | 91.83     |
+| 04      | 271       | 97.77     | 88.93     | 93.10     |
+| 05      | 2761      | 91.38     | 94.24     | 92.76     |
+| 06      | 1101      | 97.59     | 95.73     | 96.64     |
+| 07      | 1101      | 92.12     | 96.03     | 93.99     |
+| 08      | 4071      | 94.81     | 92.21     | 93.43     |
+| 09      | 1591      | 93.56     | 91.00     | 92.13     |
+| 10      | 1201      | 88.53     | 90.36     | 89.14     |
+| **Avg** | **23201** | **93.72** | **92.34** | **92.88** |
+
+### `--method patchwork --eval_protocol patchwork`  (classic Patchwork, original-Patchwork protocol)
+
+| seq     | frames    | Precision | Recall    | F1        |
+| ------- | --------- | --------- | --------- | --------- |
+| 00      | 4541      | 92.34     | 94.64     | 93.41     |
+| 01      | 1101      | 95.84     | 89.16     | 92.27     |
+| 02      | 4661      | 93.13     | 93.87     | 93.42     |
+| 03      | 801       | 90.26     | 95.74     | 92.77     |
+| 04      | 271       | 97.44     | 91.40     | 94.29     |
+| 05      | 2761      | 89.18     | 95.54     | 92.20     |
+| 06      | 1101      | 96.72     | 97.06     | 96.88     |
+| 07      | 1101      | 90.02     | 96.80     | 93.24     |
+| 08      | 4071      | 93.71     | 93.79     | 93.69     |
+| 09      | 1591      | 92.69     | 92.46     | 92.46     |
+| 10      | 1201      | 89.10     | 89.80     | 89.25     |
+| **Avg** | **23201** | **92.77** | **93.66** | **93.08** |
+
+### Per-sequence tips
+
+- **seq 05 and seq 10 are the hardest** under both protocols — undulating roads with steep cuts and rough shoulders. Recall stays high but precision drops by ~3-5 points vs. the easy seqs. Expected.
+- **seq 01 is a highway** with very planar ground and few non-ground structures — precision is highest (~97-98) and recall on the Patchwork-paper protocol is lowest (~87-89) because the high-z VEGETATION on highway shoulders gets rejected as non-ground.
+- **seq 04** has very few frames (271) so a small absolute number of errors moves the macro percentages noticeably — expect ±1 F1 noise on seq 04 alone across re-runs.
+
+______________________________________________________________________
+
 ## See also
 
 - [`python/examples/demo_visualize.py`](python/examples/demo_visualize.py) — single-frame visualisation.
