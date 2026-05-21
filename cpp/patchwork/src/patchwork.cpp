@@ -6,6 +6,9 @@
 #include <iostream>
 #include <limits>
 
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+
 #include "patchwork/plane_fit.h"
 
 namespace {
@@ -78,7 +81,7 @@ void PatchWork::pc2regionwise_patches(const std::vector<PointXYZ>& src) {
 
 void PatchWork::extract_initial_seeds(int zone_idx,
                                       const std::vector<PointXYZ>& sorted,
-                                      std::vector<PointXYZ>& seeds) {
+                                      std::vector<PointXYZ>& seeds) const {
   seeds.clear();
   if (sorted.empty()) return;
 
@@ -150,7 +153,7 @@ void PatchWork::perform_regionwise_segmentation(int zone_idx,
                                                 const std::vector<PointXYZ>& patch,
                                                 std::vector<PointXYZ>& patch_ground,
                                                 std::vector<PointXYZ>& patch_nonground,
-                                                PatchStatus& status_out) {
+                                                PatchStatus& status_out) const {
   patch_ground.clear();
   patch_nonground.clear();
 
@@ -376,27 +379,57 @@ void PatchWork::estimateGround(const Eigen::MatrixXf& cloud) {
   flush();
   pc2regionwise_patches(kept);
 
-  // 5) Per-patch segmentation (sequential — was tbb::parallel_for upstream)
-  ground_pts_.clear();
-  nonground_pts_.clear();
+  // 5) Per-patch segmentation, parallelised over all (zone, ring, sector)
+  //    patches. Each patch is independent: `perform_regionwise_segmentation`
+  //    is const, takes the patch by const ref, and writes to caller-owned
+  //    output buffers. We collect per-patch results into an indexed buffer
+  //    and then accumulate into the final ground/nonground point lists in
+  //    a serial reduction so the accumulation order is deterministic
+  //    (mirrors the original upstream patchwork's two-phase pattern).
+  struct PatchOutcome {
+    std::vector<PointXYZ> patch_ground;
+    std::vector<PointXYZ> patch_nonground;
+    PatchStatus status                     = PatchStatus::NotAssigned;
+    const std::vector<PointXYZ>* patch_ref = nullptr;  // for "reject whole patch" case
+  };
+
+  std::vector<std::tuple<int, int, int>> patch_indices;
+  patch_indices.reserve(params_.num_zones * 8 * 32);
   for (int z = 0; z < params_.num_zones; ++z) {
     for (int r = 0; r < params_.num_rings_each_zone[z]; ++r) {
       for (int s = 0; s < params_.num_sectors_each_zone[z]; ++s) {
-        const auto& patch = regionwise_patches_[z][r][s];
-        std::vector<PointXYZ> pg, png;
-        PatchStatus status;
-        perform_regionwise_segmentation(z, r, patch, pg, png, status);
-        switch (status) {
-          case PatchStatus::UprightEnough:
-          case PatchStatus::FlatEnough:
-            ground_pts_.insert(ground_pts_.end(), pg.begin(), pg.end());
-            nonground_pts_.insert(nonground_pts_.end(), png.begin(), png.end());
-            break;
-          default:
-            // Reject the whole patch as nonground
-            nonground_pts_.insert(nonground_pts_.end(), patch.begin(), patch.end());
-        }
+        patch_indices.emplace_back(z, r, s);
       }
+    }
+  }
+  const int num_patches = static_cast<int>(patch_indices.size());
+  std::vector<PatchOutcome> outcomes(num_patches);
+
+  tbb::parallel_for(tbb::blocked_range<int>(0, num_patches),
+                    [&](const tbb::blocked_range<int>& range) {
+                      for (int k = range.begin(); k < range.end(); ++k) {
+                        const auto& [z, r, s] = patch_indices[k];
+                        const auto& patch     = regionwise_patches_[z][r][s];
+                        auto& out             = outcomes[k];
+                        out.patch_ref         = &patch;
+                        perform_regionwise_segmentation(
+                            z, r, patch, out.patch_ground, out.patch_nonground, out.status);
+                      }
+                    });
+
+  ground_pts_.clear();
+  nonground_pts_.clear();
+  for (const auto& out : outcomes) {
+    switch (out.status) {
+      case PatchStatus::UprightEnough:
+      case PatchStatus::FlatEnough:
+        ground_pts_.insert(ground_pts_.end(), out.patch_ground.begin(), out.patch_ground.end());
+        nonground_pts_.insert(
+            nonground_pts_.end(), out.patch_nonground.begin(), out.patch_nonground.end());
+        break;
+      default:
+        // Reject the whole patch as nonground
+        nonground_pts_.insert(nonground_pts_.end(), out.patch_ref->begin(), out.patch_ref->end());
     }
   }
 

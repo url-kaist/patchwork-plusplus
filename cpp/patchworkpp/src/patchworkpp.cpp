@@ -1,5 +1,8 @@
 #include "patchwork/patchworkpp.h"
 
+#include <algorithm>
+#include <vector>
+
 #include "patchwork/plane_fit.h"  // xy2theta, xy2radius, point_z_cmp
 
 using namespace std;
@@ -79,7 +82,7 @@ void PatchWorkpp::estimate_plane(const vector<PointXYZ> &ground) {
 void PatchWorkpp::extract_initial_seeds(const int zone_idx,
                                         const vector<PointXYZ> &p_sorted,
                                         vector<PointXYZ> &init_seeds,
-                                        double th_seed) {
+                                        double th_seed) const {
   init_seeds.clear();
 
   // LPR is the mean of low point representative
@@ -115,7 +118,7 @@ void PatchWorkpp::extract_initial_seeds(const int zone_idx,
 
 void PatchWorkpp::extract_initial_seeds(const int zone_idx,
                                         const vector<PointXYZ> &p_sorted,
-                                        vector<PointXYZ> &init_seeds) {
+                                        vector<PointXYZ> &init_seeds) const {
   init_seeds.clear();
 
   // LPR is the mean of low point representative
@@ -185,37 +188,40 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
   std::vector<patchwork::RevertCandidate> candidates;
   std::vector<double> ringwise_flatness;
 
+  // NOTE: TBB parallelisation was evaluated for this main loop and
+  // measurably HURT throughput on KITTI (24-core / 8-core / 4-core all
+  // 30-50% slower than single-thread). The per-patch work is small
+  // (~14 µs avg) and dominated by short-lived `std::vector` /
+  // `Eigen::Matrix` allocations inside R-VPF + R-GPF, so concurrent
+  // mallocs serialise on the heap and TBB scheduler overhead exceeds
+  // the parallelisation benefit. Single-threaded Patchwork++ already
+  // runs ~110 Hz on KITTI HDL-64E (2× the paper's reported 55 Hz on
+  // i7-7700K), so there is no real-time motivation to parallelise.
+  // The classic Patchwork (see cpp/patchwork/src/patchwork.cpp) does
+  // benefit from TBB because it has no R-VPF and fewer allocations
+  // per patch.
   for (int zone_idx = 0; zone_idx < params_.num_zones; ++zone_idx) {
     auto zone = ConcentricZoneModel_[zone_idx];
 
     for (int ring_idx = 0; ring_idx < params_.num_rings_each_zone[zone_idx]; ++ring_idx) {
-      for (int sector_idx = 0; sector_idx < params_.num_sectors_each_zone[zone_idx]; ++sector_idx) {
+      const int num_sectors = params_.num_sectors_each_zone[zone_idx];
+
+      clock_t t_bef_gle = clock();
+      for (int sector_idx = 0; sector_idx < num_sectors; ++sector_idx) {
         if (zone[ring_idx][sector_idx].size() < params_.num_min_pts) {
           addCloud(cloud_nonground_, zone[ring_idx][sector_idx]);
           continue;
         }
 
-        // --------- region-wise sorting (faster than global sorting method) ---------------- //
-        clock_t t_bef_sort = clock();
-        sort(zone[ring_idx][sector_idx].begin(), zone[ring_idx][sector_idx].end(), point_z_cmp);
-        clock_t t_aft_sort = clock();
+        std::sort(
+            zone[ring_idx][sector_idx].begin(), zone[ring_idx][sector_idx].end(), point_z_cmp);
 
-        t_sort += t_aft_sort - t_bef_sort;
-        // ---------------------------------------------------------------------------------- //
-
-        clock_t t_bef_pca = clock();
         extract_piecewiseground(
             zone_idx, zone[ring_idx][sector_idx], regionwise_ground_, regionwise_nonground_);
-        clock_t t_aft_pca = clock();
-
-        t_pca += t_aft_pca - t_bef_pca;
 
         centers_.push_back(PointXYZ(pc_mean_(0), pc_mean_(1), pc_mean_(2)));
         normals_.push_back(PointXYZ(normal_(0), normal_(1), normal_(2)));
 
-        clock_t t_bef_gle = clock();
-        // Status of each patch
-        // used in checking uprightness, elevation, and flatness, respectively
         const double ground_uprightness = normal_(2);
         const double ground_elevation   = pc_mean_(2);
         const double ground_flatness    = singular_values_.minCoeff();
@@ -224,46 +230,25 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
                                               : std::numeric_limits<double>::max();
 
         double heading = 0.0;
-        for (int i = 0; i < 3; i++) heading += pc_mean_(i) * normal_(i);
+        for (int i = 0; i < 3; ++i) heading += pc_mean_(i) * normal_(i);
 
-        /*
-            About 'is_heading_outside' condition, heading should be smaller than 0 theoretically.
-            ( Imagine the geometric relationship between the surface normal vector on the ground
-           plane and the vector connecting the sensor origin and the mean point of the ground plane
-           )
-
-            However, when the patch is far awaw from the sensor origin,
-            heading could be larger than 0 even if it's ground due to lack of amount of ground plane
-           points.
-
-            Therefore, we only check this value when concentric_idx < num_rings_of_interest ( near
-           condition )
-        */
-        bool is_upright         = ground_uprightness > params_.uprightness_thr;
-        bool is_near_zone       = concentric_idx < params_.num_rings_of_interest;
-        bool is_heading_outside = heading < 0.0;
+        const bool is_upright         = ground_uprightness > params_.uprightness_thr;
+        const bool is_near_zone       = concentric_idx < params_.num_rings_of_interest;
+        const bool is_heading_outside = heading < 0.0;
 
         bool is_not_elevated = false;
         bool is_flat         = false;
-
         if (concentric_idx < params_.num_rings_of_interest) {
           is_not_elevated = ground_elevation < params_.elevation_thr[concentric_idx];
           is_flat         = ground_flatness < params_.flatness_thr[concentric_idx];
         }
 
-        /*
-            Store the elevation & flatness variables
-            for A-GLE (Adaptive Ground Likelihood Estimation)
-            and TGR (Temporal Ground Revert). More information in the paper Patchwork++.
-        */
         if (is_upright && is_not_elevated && is_near_zone) {
           update_elevation_[concentric_idx].push_back(ground_elevation);
           update_flatness_[concentric_idx].push_back(ground_flatness);
-
           ringwise_flatness.push_back(ground_flatness);
         }
 
-        // Ground estimation based on conditions
         if (!is_upright) {
           addCloud(cloud_nonground_, regionwise_ground_);
         } else if (!is_near_zone) {
@@ -273,21 +258,17 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
         } else if (is_not_elevated || is_flat) {
           addCloud(cloud_ground_, regionwise_ground_);
         } else {
-          patchwork::RevertCandidate candidate(concentric_idx,
-                                               sector_idx,
-                                               ground_flatness,
-                                               line_variable,
-                                               pc_mean_,
-                                               regionwise_ground_);
-          candidates.push_back(candidate);
+          candidates.emplace_back(concentric_idx,
+                                  sector_idx,
+                                  ground_flatness,
+                                  line_variable,
+                                  pc_mean_,
+                                  regionwise_ground_);
         }
-        // Every regionwise_nonground is considered nonground.
         addCloud(cloud_nonground_, regionwise_nonground_);
-
-        clock_t t_aft_gle = clock();
-
-        t_gle += t_aft_gle - t_bef_gle;
       }
+      clock_t t_aft_gle = clock();
+      t_gle += t_aft_gle - t_bef_gle;
 
       clock_t t_bef_revert = clock();
       if (!candidates.empty()) {

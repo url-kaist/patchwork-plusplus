@@ -72,14 +72,14 @@ class PatchWork {
   void pc2regionwise_patches(const std::vector<PointXYZ>& src);
   void extract_initial_seeds(int zone_idx,
                              const std::vector<PointXYZ>& sorted,
-                             std::vector<PointXYZ>& seeds);
+                             std::vector<PointXYZ>& seeds) const;
   PatchStatus determine_gle_status(int zone_idx, int ring_idx, const PCAFeature& feature) const;
   void perform_regionwise_segmentation(int zone_idx,
                                        int ring_idx,
                                        const std::vector<PointXYZ>& patch,
                                        std::vector<PointXYZ>& patch_ground,
                                        std::vector<PointXYZ>& patch_nonground,
-                                       PatchStatus& status_out);
+                                       PatchStatus& status_out) const;
   void estimate_sensor_height(std::vector<PointXYZ>& cloud);
   double consensus_set_based_height_estimation(const std::vector<double>& candidate_heights);
   void materialize() const;

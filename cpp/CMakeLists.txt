@@ -40,6 +40,20 @@ endfunction()
 
 find_external_dependency("Eigen3" "Eigen3::Eigen" "${CMAKE_CURRENT_LIST_DIR}/cmake/eigen.cmake")
 
+# Intel oneTBB / TBB for thread-parallel per-patch ground segmentation.
+# Required by both `cpp/patchwork/` (classic Patchwork) and `cpp/patchworkpp/`.
+find_package(TBB CONFIG QUIET)
+if (NOT TBB_FOUND)
+  find_package(TBB MODULE QUIET)
+endif()
+if (NOT TBB_FOUND)
+  message(FATAL_ERROR
+    "TBB not found. Install Intel oneTBB:\n"
+    "  Ubuntu/Debian:  apt install libtbb-dev\n"
+    "  macOS:          brew install tbb\n"
+    "  Windows:        vcpkg install tbb  (or use oneAPI Base Toolkit)")
+endif()
+
 # Parameters in `patchworkpp` subdirectory.
 # Thus, link should be `patchworkpp::ground_seg_cores`
 set(PARENT_PROJECT_NAME ${PROJECT_NAME})

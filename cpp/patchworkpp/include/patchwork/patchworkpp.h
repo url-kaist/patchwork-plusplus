@@ -231,12 +231,12 @@ class PatchWorkpp {
 
   void extract_initial_seeds(const int zone_idx,
                              const vector<PointXYZ> &p_sorted,
-                             vector<PointXYZ> &init_seeds);
+                             vector<PointXYZ> &init_seeds) const;
 
   void extract_initial_seeds(const int zone_idx,
                              const vector<PointXYZ> &p_sorted,
                              vector<PointXYZ> &init_seeds,
-                             double th_seed);
+                             double th_seed) const;
 };
 
 };  // namespace patchwork
