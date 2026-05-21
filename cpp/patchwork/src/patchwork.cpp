@@ -150,11 +150,30 @@ PatchStatus PatchWork::determine_gle_status(int zone_idx,
     return PatchStatus::TooTilted;
   }
 
-  // The first elevation_thr.size() tiers get tier-specific elevation/flatness thresholds.
+  // -----------------------------------------------------------------
+  // FIX 3: tier mapping uses the GLOBAL ring index across all zones
+  // (matches the original Patchwork repo).  Without FIX_3, the original
+  // (buggy) per-zone collapse is used.
+  // -----------------------------------------------------------------
+#ifdef PW_FIX_3
+  int tier = ring_idx;
+  for (int z = 0; z < zone_idx; ++z) tier += params_.num_rings_each_zone[z];
+#else
   const int tier = (zone_idx == 0) ? ring_idx : zone_idx;
+#endif
+
   if (tier < static_cast<int>(params_.elevation_thr.size())) {
     const double mean_z = feature.mean_(2);
-    if (mean_z > params_.elevation_thr[tier]) {
+    // -----------------------------------------------------------------
+    // FIX 1: elevation_thr is GROUND-frame; subtract sensor_height to
+    // get the sensor-frame cutoff (matches original Patchwork).
+    // -----------------------------------------------------------------
+#ifdef PW_FIX_1
+    const double elev_cut = -params_.sensor_height + params_.elevation_thr[tier];
+#else
+    const double elev_cut = params_.elevation_thr[tier];
+#endif
+    if (mean_z > elev_cut) {
       // Recoverable if the patch is very flat
       if (feature.singular_values_(2) < params_.flatness_thr[tier]) {
         return PatchStatus::FlatEnough;
@@ -204,8 +223,18 @@ void PatchWork::perform_regionwise_segmentation(int zone_idx,
     std::vector<PointXYZ> nonground;
     for (const auto& p : sorted) {
       Eigen::Vector3f v(p.x, p.y, p.z);
-      const float distance = feature.normal_.dot(v - feature.mean_);
-      if (distance < feature.th_dist_d_) {
+      // -----------------------------------------------------------------
+      // FIX 2: original Patchwork uses uncentred  normal . p  compared
+      // to (th_dist - d_).  Without FIX_2 we keep the buggy centred
+      // distance compared to (th_dist - d_), which over-shifts by ~ d_.
+      // -----------------------------------------------------------------
+#ifdef PW_FIX_2
+      const float signed_dist = feature.normal_.dot(v);              // = normal . p
+      if (signed_dist < feature.th_dist_d_) {                        //   th_dist_d_ = th_dist - d_
+#else
+      const float signed_dist = feature.normal_.dot(v - feature.mean_);
+      if (signed_dist < feature.th_dist_d_) {
+#endif
         ground.push_back(p);
       } else {
         nonground.push_back(p);
