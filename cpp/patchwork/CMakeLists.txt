@@ -12,14 +12,6 @@ target_include_directories(${CLASSIC_TARGET} PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_link_libraries(${CLASSIC_TARGET} Eigen3::Eigen ground_seg_cores)
-
-# Performance-fix ablation toggles (see fix/performance branch)
-foreach(_fix PW_FIX_1 PW_FIX_2 PW_FIX_3)
-  if (${_fix})
-    target_compile_definitions(${CLASSIC_TARGET} PUBLIC ${_fix})
-    message(STATUS "Patchwork: ${_fix} = ON")
-  endif()
-endforeach()
 add_library(${PARENT_PROJECT_NAME}::${CLASSIC_TARGET} ALIAS ${CLASSIC_TARGET})
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
