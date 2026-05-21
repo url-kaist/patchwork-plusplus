@@ -69,23 +69,23 @@ Eigen is fetched automatically by CMake, so no extra system package is required 
 
 ### Python
 
-**Pure installation**
+The released library is on PyPI:
 
 ```commandline
-make pyinstall
+pip install pypatchworkpp                # core library
+pip install 'pypatchworkpp[demo]'        # + Open3D for the visual demos
 ```
 
-Then, you can use Patchwork++ by `import pypatchworkpp`, which is super simple!
+Then `import pypatchworkpp` in your script — see the [Python examples][pyexamplelink].
 
-**Installation to run demo**
-
-Only Open3D (> 0.17.0) is additionally installed for visualization purposes.
+<details><summary>Build from source (contributors / unreleased main)</summary>
 
 ```commandline
-make pyinstall_with_demo
+make pyinstall                # equivalent to `pip install ./python/`
+make pyinstall_with_demo      # also installs Open3D >= 0.17.0
 ```
 
-How to run Python demos is explained [here][pyexamplelink].
+</details>
 
 ### C++
 
