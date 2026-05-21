@@ -40,18 +40,25 @@ endfunction()
 
 find_external_dependency("Eigen3" "Eigen3::Eigen" "${CMAKE_CURRENT_LIST_DIR}/cmake/eigen.cmake")
 
-# Intel oneTBB / TBB for thread-parallel per-patch ground segmentation.
-# Required by both `cpp/patchwork/` (classic Patchwork) and `cpp/patchworkpp/`.
+# Intel oneTBB / TBB — OPTIONAL. The classic Patchwork main loop
+# uses tbb::parallel_for when available (1.73x speedup on KITTI) and
+# falls back to a sequential loop otherwise. Patchwork++ does not use
+# TBB; see issue #96 for the measurement that justifies that decision.
+#
+# To enable the speedup locally:
+#   Ubuntu/Debian:  apt install libtbb-dev
+#   macOS:          brew install tbb
+#   Windows:        vcpkg install tbb  (or use oneAPI Base Toolkit)
 find_package(TBB CONFIG QUIET)
 if (NOT TBB_FOUND)
   find_package(TBB MODULE QUIET)
 endif()
-if (NOT TBB_FOUND)
-  message(FATAL_ERROR
-    "TBB not found. Install Intel oneTBB:\n"
-    "  Ubuntu/Debian:  apt install libtbb-dev\n"
-    "  macOS:          brew install tbb\n"
-    "  Windows:        vcpkg install tbb  (or use oneAPI Base Toolkit)")
+if (TBB_FOUND)
+  message(STATUS "TBB found — classic Patchwork will use tbb::parallel_for.")
+else()
+  message(STATUS
+    "TBB not found — classic Patchwork falls back to a sequential loop. "
+    "Install libtbb-dev / brew install tbb / vcpkg install tbb to get the parallel speedup.")
 endif()
 
 # Parameters in `patchworkpp` subdirectory.

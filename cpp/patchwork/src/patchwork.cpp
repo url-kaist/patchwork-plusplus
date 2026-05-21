@@ -6,8 +6,10 @@
 #include <iostream>
 #include <limits>
 
+#ifdef PATCHWORK_HAS_TBB
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
+#endif
 
 #include "patchwork/plane_fit.h"
 
@@ -405,17 +407,25 @@ void PatchWork::estimateGround(const Eigen::MatrixXf& cloud) {
   const int num_patches = static_cast<int>(patch_indices.size());
   std::vector<PatchOutcome> outcomes(num_patches);
 
+  auto process_patch_range = [&](int begin, int end) {
+    for (int k = begin; k < end; ++k) {
+      const auto& [z, r, s] = patch_indices[k];
+      const auto& patch     = regionwise_patches_[z][r][s];
+      auto& out             = outcomes[k];
+      out.patch_ref         = &patch;
+      perform_regionwise_segmentation(
+          z, r, patch, out.patch_ground, out.patch_nonground, out.status);
+    }
+  };
+
+#ifdef PATCHWORK_HAS_TBB
   tbb::parallel_for(tbb::blocked_range<int>(0, num_patches),
                     [&](const tbb::blocked_range<int>& range) {
-                      for (int k = range.begin(); k < range.end(); ++k) {
-                        const auto& [z, r, s] = patch_indices[k];
-                        const auto& patch     = regionwise_patches_[z][r][s];
-                        auto& out             = outcomes[k];
-                        out.patch_ref         = &patch;
-                        perform_regionwise_segmentation(
-                            z, r, patch, out.patch_ground, out.patch_nonground, out.status);
-                      }
+                      process_patch_range(range.begin(), range.end());
                     });
+#else
+  process_patch_range(0, num_patches);
+#endif
 
   ground_pts_.clear();
   nonground_pts_.clear();
