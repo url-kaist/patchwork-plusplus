@@ -3,12 +3,12 @@
 This guide covers three things that are easy to get wrong on first contact:
 
 1. [Choosing a SemanticKITTI evaluation protocol](#1-evaluation-protocols) — picks the right ground-truth definition so numbers match the paper.
-2. [Tuning the algorithm parameters for your sensor](#2-parameter-tuning) — what each knob does and which ones to touch first when results look bad.
-3. [Reproducing the paper's Table I](#3-reproducing-paper-table-i) — a one-command sweep.
+1. [Tuning the algorithm parameters for your sensor](#2-parameter-tuning) — what each knob does and which ones to touch first when results look bad.
+1. [Reproducing the paper's Table I](#3-reproducing-paper-table-i) — a one-command sweep.
 
 For a quick start, jump to [§3](#3-reproducing-paper-table-i).
 
----
+______________________________________________________________________
 
 ## 1. Evaluation protocols
 
@@ -43,7 +43,7 @@ Same Patchwork++ inference, KITTI 00–10 macro average, two protocols:
 
 3.4 F1 difference, entirely from the protocol switch. If your reproduction is 3 F1 low, this is almost certainly the cause.
 
----
+______________________________________________________________________
 
 ## 2. Parameter tuning
 
@@ -98,7 +98,7 @@ Rule of thumb: scale them ∝ `expected_terrain_undulation / 1.723 m` if your se
 - `enable_TGR` (default true) — Temporal Ground Revert. Reverts FN under-segmentation. Keep on.
 - `RNR_intensity_thr` (default 0.2) — RNR's intensity gate. Calibrate to your sensor's intensity scale: if intensities are 0–255, set to ~50.
 
----
+______________________________________________________________________
 
 ## 3. Reproducing paper Table I
 
@@ -145,7 +145,7 @@ python python/examples/evaluate_semantickitti.py \
 
 `--method patchwork` will be paper-faithful after the fixes on this branch (#89) land — until then it is ~2.3 F1 below the original Patchwork on the same protocol.
 
----
+______________________________________________________________________
 
 ## See also
 

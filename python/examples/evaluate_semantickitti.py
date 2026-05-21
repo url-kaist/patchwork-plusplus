@@ -189,20 +189,30 @@ def write_csv(path: str, rows: list[tuple[str, dict]]) -> None:
     with open(path, "w", newline="") as fp:
         writer = csv.writer(fp)
         writer.writerow(
-            ["seq", "num_frames", "precision", "recall", "f1",
-             "precision_naive", "recall_naive", "f1_naive"]
+            [
+                "seq",
+                "num_frames",
+                "precision",
+                "recall",
+                "f1",
+                "precision_naive",
+                "recall_naive",
+                "f1_naive",
+            ]
         )
         for name, m in rows:
-            writer.writerow([
-                name,
-                m["num_frames"],
-                f"{m['precision']:.4f}",
-                f"{m['recall']:.4f}",
-                f"{m['f1']:.4f}",
-                f"{m['precision_naive']:.4f}",
-                f"{m['recall_naive']:.4f}",
-                f"{m['f1_naive']:.4f}",
-            ])
+            writer.writerow(
+                [
+                    name,
+                    m["num_frames"],
+                    f"{m['precision']:.4f}",
+                    f"{m['recall']:.4f}",
+                    f"{m['f1']:.4f}",
+                    f"{m['precision_naive']:.4f}",
+                    f"{m['recall_naive']:.4f}",
+                    f"{m['f1_naive']:.4f}",
+                ]
+            )
 
 
 def main():
@@ -231,12 +241,16 @@ def main():
         choices=["patchwork", "patchworkpp"],
         default="patchwork",
         help="patchwork = original Patchwork repo protocol "
-             "(VEGETATION-low-z counted as ground). "
-             "patchworkpp = Patchwork++ paper Sec IV.A "
-             "(VEGETATION excluded from eval entirely).",
+        "(VEGETATION-low-z counted as ground). "
+        "patchworkpp = Patchwork++ paper Sec IV.A "
+        "(VEGETATION excluded from eval entirely).",
     )
-    parser.add_argument("--max_frames", type=int, default=None,
-                        help="Limit frames per sequence (smoke testing).")
+    parser.add_argument(
+        "--max_frames",
+        type=int,
+        default=None,
+        help="Limit frames per sequence (smoke testing).",
+    )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -251,7 +265,9 @@ def main():
             continue
         print(f"[seq {seq}] evaluating ...")
         t0 = time.time()
-        metrics = evaluate_sequence(seq_dir, estimator, args.max_frames, args.verbose, args.eval_protocol)
+        metrics = evaluate_sequence(
+            seq_dir, estimator, args.max_frames, args.verbose, args.eval_protocol
+        )
         dt = time.time() - t0
         print(
             f"[seq {seq}] {metrics['num_frames']} frames "
@@ -267,8 +283,14 @@ def main():
 
     avg = {
         key: float(np.mean([m[key] for _, m in rows]))
-        for key in ("precision", "recall", "f1",
-                    "precision_naive", "recall_naive", "f1_naive")
+        for key in (
+            "precision",
+            "recall",
+            "f1",
+            "precision_naive",
+            "recall_naive",
+            "f1_naive",
+        )
     }
     avg["num_frames"] = int(sum(m["num_frames"] for _, m in rows))
     avg["skipped"] = int(sum(m["skipped"] for _, m in rows))

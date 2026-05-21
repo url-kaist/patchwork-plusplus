@@ -7,13 +7,11 @@ paper's Table I baseline for context.
 
 import argparse
 import csv
-import os
-
 
 PAPER_TABLE_I = {
-    "Patchwork [1]":           {"precision": 94.23, "recall": 97.62, "f1": 95.88},
-    "Patchwork++ w/o TGR":     {"precision": 94.98, "recall": 97.64, "f1": 96.28},
-    "Patchwork++ (Ours)":      {"precision": 94.92, "recall": 98.18, "f1": 96.51},
+    "Patchwork [1]": {"precision": 94.23, "recall": 97.62, "f1": 95.88},
+    "Patchwork++ w/o TGR": {"precision": 94.98, "recall": 97.64, "f1": 96.28},
+    "Patchwork++ (Ours)": {"precision": 94.92, "recall": 98.18, "f1": 96.51},
 }
 
 
@@ -64,7 +62,9 @@ def main():
     print()
     print("Paper Table I baseline (SemanticKITTI, paper's eval protocol):")
     for k, v in PAPER_TABLE_I.items():
-        print(f"  {k:<22}  P={v['precision']:.2f}  R={v['recall']:.2f}  F1={v['f1']:.2f}")
+        print(
+            f"  {k:<22}  P={v['precision']:.2f}  R={v['recall']:.2f}  F1={v['f1']:.2f}"
+        )
 
     print()
     print(
