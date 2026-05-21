@@ -1,5 +1,30 @@
 # Changelog
 
+## v1.3.1
+
+### Bug fix — `pypatchworkpp.patchworkpp` (Patchwork++)
+
+- `ringwise_flatness` is now cleared at the end of every ring iteration
+  in `cpp/patchworkpp/src/patchworkpp.cpp`, not only when the ring had
+  revert candidates. The previous placement leaked flatnesses from
+  no-candidate rings into the next ring's `temporal_ground_revert` call,
+  biasing the revert decision threshold. Reported by @KennethBlomqvist
+  in #69. Closes #69.
+
+### Numerical impact
+
+KITTI 00–10 full sweep (23,201 frames) under the Patchwork++ paper
+protocol:
+
+| Build  | P       | R       | F1      |
+| ------ | ------- | ------- | ------- |
+| v1.3.0 | 95.5494 | 97.1649 | 96.2886 |
+| v1.3.1 | 95.5496 | 97.1710 | 96.2918 |
+
+ΔF1 = +0.003 (within run-to-run noise). The bug only triggered when a
+ring finished with no revert candidates, which is uncommon on KITTI;
+the macro-average impact is negligible but the fix is correctness.
+
 ## v1.3.0
 
 ### Performance enhancement — `pypatchworkpp.patchwork` (classic Patchwork reimpl)
