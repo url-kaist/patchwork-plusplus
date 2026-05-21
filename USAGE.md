@@ -1,4 +1,44 @@
-# Patchwork++ — Usage Guide
+<div align="center">
+    <h1>Patchwork++</h1>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/patchworkpp"><img src="https://img.shields.io/badge/-C++-blue?logo=cplusplus" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Python-3670A0?logo=python&logoColor=ffdd54" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/ros"><img src="https://img.shields.io/badge/ROS2-Humble-blue" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/macOS-000000?logo=apple&logoColor=white" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master"><img src="https://img.shields.io/badge/Windows-0078D6?logo=windows&logoColor=white" /></a>
+    <a href="https://arxiv.org/abs/2207.11919"><img src="https://img.shields.io/badge/arXiv-b33737?logo=arXiv" /></a>
+    <a href="https://ieeexplore.ieee.org/document/9981561"><img src="https://img.shields.io/badge/DOI-10.1109/IROS47612.2022.9981561-004088.svg"/></a>
+    <br />
+    <a href="https://github.com/url-kaist/patchwork-plusplus/actions/workflows/cpp.yml"><img src="https://github.com/url-kaist/patchwork-plusplus/actions/workflows/cpp.yml/badge.svg?branch=master" alt="C++ API" /></a>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/actions/workflows/python.yml"><img src="https://github.com/url-kaist/patchwork-plusplus/actions/workflows/python.yml/badge.svg?branch=master" alt="Python API" /></a>
+    <br />
+    <br />
+    <a href=https://www.youtube.com/watch?v=fogCM159GRk>Video</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/README.md###Python">Install</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://github.com/url-kaist/patchwork-plusplus/tree/master/ros">ROS2</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href=https://www.youtube.com/watch?v=fogCM159GRk>Paper</a>
+    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href=https://github.com/url-kaist/patchwork-plusplus/issues>Contact Us</a>
+  <br />
+  <br />
+  <p align="center"><img src=pictures/patchwork++.gif alt="animated" /></p>
+
+<p align="center">
+    <strong>(May 19, 2026)</strong> pip installation is now live:
+    <br/>
+    <a href="https://pypi.org/project/pypatchworkpp/"><img src="https://readme-typing-svg.demolab.com?background=0D1117&color=22C55E&font=Fira+Code&size=18&duration=2500&pause=800&center=true&vCenter=true&width=320&height=30&lines=%24+pip+install+pypatchworkpp" alt="pip install pypatchworkpp"/></a>
+</p>
+
+[Patchwork++][arxivlink], an extension of [Patchwork][patchworklink], is **a fast, robust, and self-adaptive ground segmentation algorithm** on 3D point cloud.
+
+</div>
+
+______________________________________________________________________
+
+# :books: Usage Guide
 
 This guide covers three things that are easy to get wrong on first contact:
 
@@ -10,7 +50,7 @@ For a quick start, jump to [§3](#3-reproducing-paper-table-i).
 
 ______________________________________________________________________
 
-## 1. Evaluation protocols
+## :scroll: 1. Evaluation protocols
 
 The Patchwork and Patchwork++ papers use **different** ground-truth definitions on SemanticKITTI. The eval driver `python/examples/evaluate_semantickitti.py` supports both via `--eval_protocol {patchwork, patchworkpp}`.
 
@@ -54,7 +94,7 @@ Same Patchwork++ inference, KITTI 00–10 macro average, two protocols:
 
 ______________________________________________________________________
 
-## 2. Parameter tuning
+## :wrench: 2. Parameter tuning
 
 If results look wrong on a new sensor (Velodyne 16/32, Ouster 64/128, Livox, etc.), tune in roughly this order. Defaults are in `cpp/patchworkpp/include/patchwork/patchworkpp.h` (Patchwork++) and `cpp/patchwork/include/patchwork/patchwork.h` (classic Patchwork).
 
@@ -109,7 +149,7 @@ Rule of thumb: scale them ∝ `expected_terrain_undulation / 1.723 m` if your se
 
 ______________________________________________________________________
 
-## 3. Reproducing paper Table I
+## :rocket: 3. Reproducing paper Table I
 
 ```bash
 # 1. Install once
@@ -156,7 +196,7 @@ python python/examples/evaluate_semantickitti.py \
 
 ______________________________________________________________________
 
-## 4. Official benchmarks
+## :bar_chart: 4. Official benchmarks
 
 KITTI 00-10 full sweep, **23,201 frames**, macro-average across the eleven sequences. All numbers are produced by `python/examples/evaluate_semantickitti.py` on current `master` (v1.3.1) with paper-matched parameters (the script already sets `uprightness_thr=0.707` and `using_global_thr=false` for `--method patchwork`; `--method patchworkpp` uses library defaults).
 
@@ -208,7 +248,7 @@ python python/examples/evaluate_semantickitti.py \
 
 ______________________________________________________________________
 
-## 5. Per-sequence performance
+## :chart_with_upwards_trend: 5. Per-sequence performance
 
 All numbers below are produced by `python/examples/evaluate_semantickitti.py` on v1.3.1 (current `master`), KITTI 00-10, paper-matched parameters. Use them to debug per-sequence regressions: if seq 05 looks fine but seq 10 is 3 F1 below the table, you have a parameter problem, not a code problem.
 
@@ -288,8 +328,116 @@ All numbers below are produced by `python/examples/evaluate_semantickitti.py` on
 
 ______________________________________________________________________
 
-## See also
+## :vs: 6. RANSAC baseline (Open3D `segment_plane`)
+
+A common first instinct on a new dataset is to fit a single plane with RANSAC and call the inliers "ground". `python/examples/evaluate_ransac_in_semantickitti.py` does exactly that, on top of Open3D's `segment_plane`, with the same metric definitions and `--eval_protocol` flag as `evaluate_semantickitti.py`, so the numbers drop directly into the same comparison frame as §5.
+
+```bash
+# Single (thr, iter) point — defaults to thr=0.15, iter=500
+python python/examples/evaluate_ransac_in_semantickitti.py \
+    --distance_threshold 0.15 --num_iterations 1000 \
+    --eval_protocol patchworkpp
+
+# Full sweep across a (thr × iter) grid
+python python/examples/evaluate_ransac_in_semantickitti.py \
+    --seqs 00 \
+    --sweep_thresholds 0.10,0.15,0.25,0.30,0.40,0.50 \
+    --sweep_iterations 100,500,1000,5000,10000 \
+    --eval_protocol patchworkpp \
+    --output_csv summary_ransac_seq00_grid.csv
+```
+
+### Grid sweep on KITTI seq 00 (4541 frames, `--eval_protocol patchworkpp`)
+
+`distance_threshold` (rows) is the max point-to-plane distance counted as inlier (metres). `num_iterations` (columns) is the RANSAC hypothesis cap; Open3D's `segment_plane` early-terminates when a hypothesis crosses an internal confidence bound, so this is a **maximum** not an exact iteration count. `ransac_n=3` throughout (plane). Cell value is **F1 (%)**; second line is the **median wall-clock ms** of `segment_plane` per frame.
+
+| thr \\ iter | 100              | 500              | 1000             | 5000             | 10000               |
+| ----------- | ---------------- | ---------------- | ---------------- | ---------------- | ------------------- |
+| 0.10        | 82.67 (16.5 ms)  | 88.69 (34.6 ms)  | 89.31 (37.5 ms)  | 89.31 (56.6 ms)  | 89.33 (56.7 ms)     |
+| **0.15**    | 89.34 (17.1 ms)  | 93.12 (29.3 ms)  | **93.28 (29.3 ms)** | 93.30 (40.7 ms) | **93.35 (40.8 ms)** |
+| 0.25        | 90.94 (17.4 ms)  | 92.34 (24.0 ms)  | 92.72 (24.2 ms)  | 92.52 (30.4 ms)  | 92.52 (30.5 ms)     |
+| 0.30        | 89.54 (17.5 ms)  | 90.16 (22.6 ms)  | 90.20 (22.4 ms)  | 90.35 (27.5 ms)  | 90.21 (27.7 ms)     |
+| 0.40        | 84.38 (15.8 ms)  | 84.72 (18.6 ms)  | 84.78 (20.4 ms)  | 84.75 (22.8 ms)  | 84.71 (23.0 ms)     |
+| 0.50        | 79.43 (18.3 ms)  | 80.25 (17.8 ms)  | 80.16 (18.1 ms)  | 80.24 (18.4 ms)  | 80.02 (18.6 ms)     |
+
+Wall-clock numbers are median per-frame ms of `segment_plane` on an i7-12700; the 24-thread parallel default of Open3D is used for iter ≤ 1000, and 8 threads (`OMP_NUM_THREADS=8`) for iter ≥ 5000 (the 24-thread iter=10000 run exhausted system memory). Compare F1 numbers across columns freely; absolute ms across iter≤1000 and iter≥5000 columns are not directly comparable.
+
+### Reading the grid
+
+- **`distance_threshold` is the dominant knob, and the F1 column has a clear inverted-U.** Tight thresholds (0.10 m) over-reject — precision saturates near 96.7 but recall caps at 83. Loose thresholds (0.40–0.50 m) over-accept — precision falls below 81. The F1 ridge sits firmly at **thr=0.15**, no matter how many iterations RANSAC is allowed.
+- **`num_iterations` saturates between 500 and 1000.** Going from 100 → 500 buys 3–6 F1; 500 → 1000 buys 0.0–0.6; 1000 → 10000 buys at most **+0.07 F1** anywhere in the table — well inside run-to-run noise. Open3D's early-termination is the cause: for thr ≥ 0.15 the wall-clock barely moves between iter=1000 and iter=10000, confirming that the inner loop stops on its own well before the cap. Only thr=0.10 keeps the loop running to the cap (37.5 → 56.7 ms going 1000 → 10000), and even there F1 changes by 0.02.
+- **The dominant-plane assumption is the ceiling.** The best cell on the entire grid is `thr=0.15, iter=10000 → F1=93.35`, indistinguishable from `thr=0.15, iter=1000 → F1=93.28`. Practically there is no high-iter config that meaningfully improves on the cheap one; the algorithmic ceiling is set by the single-plane model, not by RANSAC's iteration budget.
+
+### Best config on the full KITTI 00–10 sweep
+
+Picking `thr=0.15, iter=1000` (ties the highest-iter F1 at this threshold, runs faster) and evaluating on all 23,201 frames under the Patchwork++ paper protocol:
+
+| seq     | frames    | Precision | Recall    | F1        |
+| ------- | --------- | --------- | --------- | --------- |
+| 00      | 4541      | 95.37     | 91.63     | 93.31     |
+| 01      | 1101      | 98.33     | 87.74     | 92.52     |
+| 02      | 4661      | 94.34     | 80.44     | 86.27     |
+| 03      | 801       | 97.92     | 77.49     | 85.79     |
+| 04      | 271       | 97.70     | 87.90     | 92.42     |
+| 05      | 2761      | 93.01     | 88.09     | 90.26     |
+| 06      | 1101      | 97.29     | 79.67     | 87.52     |
+| 07      | 1101      | 92.68     | 89.33     | 90.81     |
+| 08      | 4071      | 93.33     | 78.20     | 83.88     |
+| 09      | 1591      | 96.75     | 80.68     | 87.65     |
+| 10      | 1201      | 79.23     | 61.17     | 67.75     |
+| **Avg** | **23201** | **94.18** | **82.03** | **87.11** |
+
+Median wall-clock 19.5 ms / frame (51.2 Hz) with Open3D's default 24-thread parallelism on an i7-12700.
+
+### Macro comparison — RANSAC vs. Patchwork / Patchwork++ on KITTI 00–10
+
+Side-by-side with the §5 numbers, under `--eval_protocol patchworkpp` on the same 23,201 frames:
+
+| Method                                                  | Precision | Recall    | F1        | Median ms |
+| ------------------------------------------------------- | --------- | --------- | --------- | --------- |
+| Open3D RANSAC (best: thr=0.15, iter=1000)               | 94.18     | 82.03     | 87.11     | ~19.5     |
+| Classic Patchwork (this repo, v1.4.0)                   | 94.64     | 97.58     | 96.02     | ~9        |
+| **Patchwork++ (this repo, v1.4.0)**                     | **95.55** | **97.16** | **96.29** | ~18       |
+
+**Patchwork++ wins by +9.18 F1 on the macro average** and roughly **matches** RANSAC on wall-clock per frame (~18 ms vs. ~19.5 ms), even though Patchwork++ is currently single-threaded on v1.4.0 (TBB intentionally disabled; see #96) while Open3D's `segment_plane` is using all 24 cores. The recall column is where the gap concentrates: RANSAC's 82.03 vs. Patchwork++'s 97.16 — a single global plane simply cannot cover the multiple ground patches that the concentric-zone partition handles natively.
+
+### Per-sequence gap to Patchwork++
+
+The macro gap is not uniform; it is dragged down by the hard sequences:
+
+| seq | scene                       | RANSAC F1 | Patchwork++ F1 | Δ         |
+| --- | --------------------------- | --------- | -------------- | --------- |
+| 00  | residential, mild slope     | 93.31     | 96.62          | -3.31     |
+| 01  | highway                     | 92.52     | 97.34          | -4.82     |
+| 02  | residential, parked cars    | 86.27     | 96.35          | -10.08    |
+| 03  | short urban                 | 85.79     | 97.21          | -11.42    |
+| 04  | short highway               | 92.42     | 97.25          | -4.83     |
+| 05  | undulating road             | 90.26     | 94.84          | -4.58     |
+| 06  | open road                   | 87.52     | 97.61          | -10.09    |
+| 07  | inner-city                  | 90.81     | 95.56          | -4.75     |
+| 08  | dense urban                 | 83.88     | 96.74          | -12.86    |
+| 09  | rural                       | 87.65     | 96.06          | -8.41     |
+| 10  | rough rural / rolling roads | **67.75** | **93.63**      | **-25.88** |
+
+Sequences with a gap below 5 F1 (00, 01, 04, 05, 07) are essentially flat with a single dominant ground plane — exactly where the single-plane assumption holds. Sequences with a gap above 10 F1 (02, 03, 06, 08, 10) all have rolling shoulders, multi-tier sidewalks, or rough off-road terrain — multiple ground patches that one plane cannot represent. Seq 10 is the extreme case: rolling rural terrain where one global plane is so wrong RANSAC drops below 70 F1 while Patchwork++ stays above 93 F1.
+
+### Takeaway
+
+RANSAC is the obvious sanity-check baseline for ground segmentation. On KITTI it is **9 F1 behind the macro Patchwork++ row, 26 F1 behind on the worst sequence, and no improvement at higher iteration counts can close that gap** — the bottleneck is the model, not the optimiser. The concentric-zone partition that Patchwork and Patchwork++ both use turns this from a hard problem (one plane for the whole scan) into many easy ones (one plane per patch, with per-patch flatness and elevation gates), which is what closes the gap.
+
+### Caveats
+
+- `ransac_n=3` (plane) is the only value tested. Higher `ransac_n` fits higher-order surfaces and is out of scope here.
+- The grid timing uses Open3D's default thread pool at iter ≤ 1000 and an 8-thread cap at iter ≥ 5000 (memory pressure at 24 threads × iter=10000 forced the cap). F1 numbers are insensitive to thread count; wall-clock numbers between low-iter and high-iter columns are **not** directly comparable. The full-KITTI Patchwork++ comparison row uses 24 threads on both sides.
+- The Patchwork++ wall-clock row above (~18 ms median, single-threaded) is conservative. Enabling TBB on the Patchwork++ side (currently disabled — see #96) is expected to roughly halve it and widen the Hz gap further. Classic Patchwork (v1.4.0) is already TBB-parallel and runs at ~9 ms median on this machine.
+
+______________________________________________________________________
+
+## :link: See also
 
 - [`python/examples/demo_visualize.py`](python/examples/demo_visualize.py) — single-frame visualisation.
 - [`python/examples/demo_sequential.py`](python/examples/demo_sequential.py) — iterate over a folder of `.bin` files.
 - Issues: [#87](https://github.com/url-kaist/patchwork-plusplus/issues/87) (reproduce paper), [#88](https://github.com/url-kaist/patchwork-plusplus/issues/88) (evaluation protocol), [#89](https://github.com/url-kaist/patchwork-plusplus/issues/89) (performance enhancement).
+
+[arxivlink]: https://arxiv.org/abs/2207.11919
+[patchworklink]: https://github.com/LimHyungTae/patchwork
