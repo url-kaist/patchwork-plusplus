@@ -143,7 +143,59 @@ python python/examples/evaluate_semantickitti.py \
     --output_csv summary_patchwork.csv
 ```
 
-`--method patchwork` will be paper-faithful after the fixes on this branch (#89) land — until then it is ~2.3 F1 below the original Patchwork on the same protocol.
+`--method patchwork` is paper-faithful since v1.3.0 (see #89 / #90 for the fixes).
+
+______________________________________________________________________
+
+## 4. Official benchmarks
+
+KITTI 00-10 full sweep, **23,201 frames**, macro-average across the eleven sequences. All numbers are produced by `python/examples/evaluate_semantickitti.py` on current `master` (v1.3.1) with paper-matched parameters (the script already sets `uprightness_thr=0.707` and `using_global_thr=false` for `--method patchwork`; `--method patchworkpp` uses library defaults).
+
+### `--eval_protocol patchworkpp`  (Patchwork++ paper Sec. IV.A — VEGETATION excluded)
+
+| Method                                                                | Precision | Recall    | F1        |
+| --------------------------------------------------------------------- | --------- | --------- | --------- |
+| **`--method patchwork`** (this repo, classic Patchwork)               | 94.64     | 97.58     | 96.02     |
+| **`--method patchworkpp`** (this repo, Patchwork++)                   | **95.55** | **97.16** | **96.29** |
+| Patchwork \[1\] — as reported in Patchwork++ paper Table I            | 94.23     | 97.62     | 95.88     |
+| Patchwork++ — as reported in Patchwork++ paper Table I                | 94.92     | 98.18     | 96.51     |
+| `url-kaist/patchwork` (original ROS 2) — independent reference number | 94.38     | 97.90     | 96.05     |
+
+This is the protocol you want for **reproducing the Patchwork++ paper**.
+
+### `--eval_protocol patchwork`  (original Patchwork repo — VEGETATION-low-z counts as ground)
+
+| Method                                                                | Precision | Recall    | F1        |
+| --------------------------------------------------------------------- | --------- | --------- | --------- |
+| **`--method patchwork`** (this repo, classic Patchwork)               | 92.77     | 93.66     | 93.08     |
+| **`--method patchworkpp`** (this repo, Patchwork++)                   | 93.72     | 92.33     | 92.87     |
+| Patchwork \[1\] — as reported in original Patchwork paper Table I     | 92.47     | 93.43     | 93.00     |
+| `url-kaist/patchwork` (original ROS 2) — independent reference number | 91.94     | 94.22     | 92.94     |
+
+This is the protocol you want for **apples-to-apples comparisons against the original Patchwork paper / `url-kaist/patchwork` repo**.
+
+### Reading the table
+
+- Under the Patchwork++ paper protocol, both methods match their respective paper rows within run-to-run variance (±0.2 F1).
+- Patchwork++ beats Patchwork on precision and F1 (the headline claim of the paper). Patchwork has marginally higher recall.
+- Switching protocol moves both methods by ~3 F1 in the same direction; **never compare numbers across protocols**.
+- The numbers in this table are what you should see on your machine. If your F1 is more than ~0.5 off, the most common cause is the evaluation-protocol mismatch (see [§1](#1-evaluation-protocols)), followed by `sensor_height` being wrong for your sensor (see [§2](#2-parameter-tuning) Step 1).
+
+### Reproducing any row
+
+```bash
+# Patchwork++, paper protocol — top-line headline number
+python python/examples/evaluate_semantickitti.py \
+    --method patchworkpp --eval_protocol patchworkpp \
+    --dataset_path /path/to/SemanticKITTI/sequences
+
+# Classic Patchwork, paper protocol — apples-to-apples vs. Patchwork++
+python python/examples/evaluate_semantickitti.py \
+    --method patchwork --eval_protocol patchworkpp \
+    --dataset_path /path/to/SemanticKITTI/sequences
+
+# Either method under the original Patchwork-paper protocol — swap `--eval_protocol patchwork`
+```
 
 ______________________________________________________________________
 
