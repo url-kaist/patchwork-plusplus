@@ -300,8 +300,12 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
         }
 
         candidates.clear();
-        ringwise_flatness.clear();
       }
+      // ringwise_flatness must be cleared every ring; the previous
+      // placement inside `if (!candidates.empty())` leaked flatnesses
+      // from no-candidate rings into the next ring's TGR statistics
+      // (see issue #69).
+      ringwise_flatness.clear();
       clock_t t_aft_revert = clock();
 
       t_revert += t_aft_revert - t_bef_revert;
