@@ -316,7 +316,9 @@ def main():
     args = parser.parse_args()
 
     if (args.sweep_thresholds is None) != (args.sweep_iterations is None):
-        parser.error("Pass --sweep_thresholds AND --sweep_iterations together, or neither.")
+        parser.error(
+            "Pass --sweep_thresholds AND --sweep_iterations together, or neither."
+        )
 
     if args.sweep_thresholds is None:
         configs = [(args.distance_threshold, args.num_iterations)]
@@ -332,7 +334,9 @@ def main():
         for seq in args.seqs:
             seq_dir = os.path.join(args.dataset_path, seq)
             if not os.path.isdir(seq_dir):
-                print(f"[WARN] Skipping {seq}: {seq_dir} does not exist", file=sys.stderr)
+                print(
+                    f"[WARN] Skipping {seq}: {seq_dir} does not exist", file=sys.stderr
+                )
                 continue
             print(f"[seq {seq}] evaluating ...")
             t0 = time.time()
