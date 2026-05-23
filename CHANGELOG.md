@@ -12,11 +12,10 @@ short-lived allocations in R-VPF + R-GPF.
 
 **High-impact (this is where the +14.8% comes from):**
 
-- `estimate_plane`: drop `Eigen::MatrixX3f eigen_ground` + `centered`
-  + `centered.adjoint() * centered`. Replace with a single-pass
-  scalar accumulation of mean and 9 cross-products, then build the
-  3x3 covariance on the stack. No more per-call Eigen heap
-  allocations.
+- `estimate_plane`: drop the `Eigen::MatrixX3f eigen_ground`,
+  `centered`, and `centered.adjoint() * centered` heap allocations.
+  Replace with a single-pass scalar accumulation of mean and 9
+  cross-products, then build the 3x3 covariance on the stack.
 - `extract_piecewiseground`: promote `src_wo_verticals` and
   `src_tmp` to reused instance scratch members. `vector::clear()`
   keeps capacity, so per-patch malloc pressure on the glibc heap
@@ -50,10 +49,10 @@ is sub-us/patch.
 
 KITTI seq 00 (4541 frames), v1.4.0 to v1.4.1:
 
-| Method (protocol)   | Before                     | After                      | Δ F1  |
-| ------------------- | -------------------------- | -------------------------- | ----: |
-| `patchwork` (pw)    | P 92.34, R 94.64, F1 93.41 | P 92.34, R 94.64, F1 93.41 |  0.00 |
-| `patchworkpp` (pp)  | P 94.88, R 98.47, F1 96.62 | P 94.89, R 98.48, F1 96.63 | +0.01 |
+| Method (protocol)  | Before                     | After                      |  Δ F1 |
+| ------------------ | -------------------------- | -------------------------- | ----: |
+| `patchwork` (pw)   | P 92.34, R 94.64, F1 93.41 | P 92.34, R 94.64, F1 93.41 |  0.00 |
+| `patchworkpp` (pp) | P 94.88, R 98.47, F1 96.62 | P 94.89, R 98.48, F1 96.63 | +0.01 |
 
 Algebraic identity of `JacobiSVD` vs `eigh` verified on 500 real
 KITTI patch covariances: `normal_` (up to sign),
@@ -95,10 +94,10 @@ order so numerical results are byte-identical to the sequential path.
 
 Measured on KITTI seq 00 (i7-12700, 24 logical cores):
 
-| Configuration | Median ms/frame | Median Hz |
-| -- | --: | --: |
-| `--method patchwork` single-thread (taskset -c 0) | 8.31 | 120.4 |
-| `--method patchwork` parallel (TBB default scheduler) | **4.81** | **207.8** |
+| Configuration                                         | Median ms/frame | Median Hz |
+| ----------------------------------------------------- | --------------: | --------: |
+| `--method patchwork` single-thread (taskset -c 0)     |            8.31 |     120.4 |
+| `--method patchwork` parallel (TBB default scheduler) |        **4.81** | **207.8** |
 
 **1.73× speedup**. TBB is an **optional** build dependency: missing
 TBB causes a CMake STATUS message and falls back to a sequential
@@ -129,10 +128,10 @@ or a real user CPU complaint).
 KITTI 00-10 full sweep (23,201 frames), Patchwork++ paper protocol,
 v1.3.1 → v1.4.0:
 
-| Method | F1 v1.3.1 | F1 v1.4.0 | Δ |
-| --- | --- | --- | --- |
-| `--method patchwork` | 96.0172 | 96.0172 | 0 (byte-identical) |
-| `--method patchworkpp` | 96.2918 | 96.2919 | +0.0001 (float noise) |
+| Method                 | F1 v1.3.1 | F1 v1.4.0 | Δ                     |
+| ---------------------- | --------- | --------- | --------------------- |
+| `--method patchwork`   | 96.0172   | 96.0172   | 0 (byte-identical)    |
+| `--method patchworkpp` | 96.2918   | 96.2919   | +0.0001 (float noise) |
 
 Both well within the ±0.05 budget set in the refactor plan.
 
@@ -177,12 +176,12 @@ parameters (`uprightness_thr=0.707`, `using_global_thr=false`) on SemanticKITTI
 sequences 00–10 (23,201 frames), under the Patchwork++ paper evaluation
 protocol (Sec. IV.A — VEGETATION excluded):
 
-| Configuration | Precision | Recall | F1 |
-| --- | --- | --- | --- |
-| v1.2.0 (`pypatchworkpp.patchwork`) | 89.70 | 98.49 | 93.73 |
-| **v1.3.0 (`pypatchworkpp.patchwork`)** | **94.64** | **97.58** | **96.02** |
-| Original Patchwork ROS 2 (reference) | 94.38 | 97.90 | 96.05 |
-| Patchwork++ paper Table I, Patchwork \[1\] | 94.23 | 97.62 | 95.88 |
+| Configuration                            | Precision | Recall    | F1        |
+| ---------------------------------------- | --------- | --------- | --------- |
+| v1.2.0 (`pypatchworkpp.patchwork`)       | 89.70     | 98.49     | 93.73     |
+| **v1.3.0 (`pypatchworkpp.patchwork`)**   | **94.64** | **97.58** | **96.02** |
+| Original Patchwork ROS 2 (reference)     | 94.38     | 97.90     | 96.05     |
+| Patchwork++ paper Table I, Patchwork [1] | 94.23     | 97.62     | 95.88     |
 
 **+2.29 F1** vs v1.2.0; within ±0.14 F1 of the original Patchwork ROS 2 build
 and within paper run-to-run variance of Table I.
@@ -195,7 +194,7 @@ Fixes:
    effectively never fired for normal ground.
 1. Plane-distance comparison now uses uncentred `normal · p` against
    `th_dist_d_ = th_dist − d_`, which is equivalent to "signed distance to
-   plane \< th_dist". The previous centred form shifted the cutoff by an
+   plane < th_dist". The previous centred form shifted the cutoff by an
    extra `−d_ ≈ |normal · mean| ≈ 1.6 m` on KITTI ground.
 1. The elevation/flatness tier index is now the GLOBAL ring index across all
    zones, so each of the first `elevation_thr.size()` rings gets its own
