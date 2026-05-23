@@ -1,5 +1,71 @@
 # Changelog
 
+## v1.4.1
+
+### Perf — `pypatchworkpp.patchworkpp` per-patch heap traffic eliminated
+
+Three changes inside `PatchWorkpp::extract_piecewiseground` and
+`PatchWorkpp::estimate_plane` take KITTI seq 00 from 10.26 ms to
+8.94 ms per frame (**97.5 Hz → 111.9 Hz, +14.8% Hz**, median of 3
+runs, i7-12700). This closes the part of #96 that was driven by
+short-lived allocations in R-VPF + R-GPF.
+
+**High-impact (this is where the +14.8% comes from):**
+
+- `estimate_plane`: drop `Eigen::MatrixX3f eigen_ground` + `centered`
+  + `centered.adjoint() * centered`. Replace with a single-pass
+  scalar accumulation of mean and 9 cross-products, then build the
+  3x3 covariance on the stack. No more per-call Eigen heap
+  allocations.
+- `extract_piecewiseground`: promote `src_wo_verticals` and
+  `src_tmp` to reused instance scratch members. `vector::clear()`
+  keeps capacity, so per-patch malloc pressure on the glibc heap
+  (which was serialising the loop, see #96) drops away after the
+  first few patches.
+- `estimateGround` main loop: `auto& zone` instead of `auto zone`
+  for `ConcentricZoneModel_[zone_idx]`. Avoids a deep-copy of the
+  full 3-level nested vector per outer iteration. Safe because each
+  `(zone, ring, sector)` patch is read once and the CZM is flushed
+  at the top of every `estimateGround` call.
+
+**Lower-impact, kept for cleanliness:**
+
+- `JacobiSVD<Matrix3f>` to `SelfAdjointEigenSolver::computeDirect`
+  for the 3x3 PSD covariance in both `cpp/common/src/plane_fit.cpp`
+  and the in-place `PatchWorkpp::estimate_plane`. Closed-form, no
+  Jacobi iterations. `singular_values_` is repacked descending so
+  every consumer (`linearity_` / `planarity_` in `common`,
+  `flatness_thr` index `(2)` in patchwork classic,
+  `ground_flatness=minCoeff()` and `line_variable=sv(0)/sv(1)` in
+  patchwork++) keeps the same convention bit-for-bit.
+- `const&` on `addCloud`'s `add` parameter, `RevertCandidate` loop
+  vars, and the `temporal_ground_revert` /
+  `calc_point_to_plane_d` / `calc_mean_stdev` signatures.
+
+Patchwork classic is unaffected on the perf side: TBB
+`parallel_for` already amortises allocations across cores and SVD
+is sub-us/patch.
+
+### Numerical equivalence
+
+KITTI seq 00 (4541 frames), v1.4.0 to v1.4.1:
+
+| Method (protocol)   | Before                     | After                      | Δ F1  |
+| ------------------- | -------------------------- | -------------------------- | ----: |
+| `patchwork` (pw)    | P 92.34, R 94.64, F1 93.41 | P 92.34, R 94.64, F1 93.41 |  0.00 |
+| `patchworkpp` (pp)  | P 94.88, R 98.47, F1 96.62 | P 94.89, R 98.48, F1 96.63 | +0.01 |
+
+Algebraic identity of `JacobiSVD` vs `eigh` verified on 500 real
+KITTI patch covariances: `normal_` (up to sign),
+`singular_values_`, `linearity_`, `planarity_`, `ground_flatness`,
+`line_variable` all match to FP precision. Both within the ±0.05
+macro budget.
+
+### References
+
+- #100 — PR (perf: alloc-free + eigh)
+- #96 — Issue (R-VPF / R-GPF allocation profile)
+
 ## v1.4.0
 
 ### Refactor — shared `common` library + optional TBB parallelisation
