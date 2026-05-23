@@ -181,7 +181,7 @@ protocol (Sec. IV.A — VEGETATION excluded):
 | v1.2.0 (`pypatchworkpp.patchwork`)       | 89.70     | 98.49     | 93.73     |
 | **v1.3.0 (`pypatchworkpp.patchwork`)**   | **94.64** | **97.58** | **96.02** |
 | Original Patchwork ROS 2 (reference)     | 94.38     | 97.90     | 96.05     |
-| Patchwork++ paper Table I, Patchwork [1] | 94.23     | 97.62     | 95.88     |
+| Patchwork++ paper Table I, Patchwork \[1\] | 94.23     | 97.62     | 95.88     |
 
 **+2.29 F1** vs v1.2.0; within ±0.14 F1 of the original Patchwork ROS 2 build
 and within paper run-to-run variance of Table I.
@@ -194,7 +194,7 @@ Fixes:
    effectively never fired for normal ground.
 1. Plane-distance comparison now uses uncentred `normal · p` against
    `th_dist_d_ = th_dist − d_`, which is equivalent to "signed distance to
-   plane < th_dist". The previous centred form shifted the cutoff by an
+   plane \< th_dist". The previous centred form shifted the cutoff by an
    extra `−d_ ≈ |normal · mean| ≈ 1.6 m` on KITTI ground.
 1. The elevation/flatness tier index is now the GLOBAL ring index across all
    zones, so each of the first `elevation_thr.size()` rings gets its own
