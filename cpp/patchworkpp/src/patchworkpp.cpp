@@ -26,7 +26,7 @@ Eigen::VectorXi PatchWorkpp::toIndices(const vector<PointXYZ> &cloud) {
   return dst;
 }
 
-void PatchWorkpp::addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add) {
+void PatchWorkpp::addCloud(vector<PointXYZ> &cloud, const vector<PointXYZ> &add) {
   cloud.insert(cloud.end(), add.begin(), add.end());
 }
 
@@ -49,34 +49,60 @@ void PatchWorkpp::flush_patches(vector<Zone> &czm) {
 void PatchWorkpp::estimate_plane(const vector<PointXYZ> &ground) {
   if (ground.empty()) return;
 
-  Eigen::MatrixX3f eigen_ground(ground.size(), 3);
-  int j = 0;
-  for (auto &p : ground) {
-    eigen_ground.row(j++) << p.x, p.y, p.z;
+  // Single-pass accumulation of mean + cross-products. Avoids the
+  // per-call Eigen::MatrixX3f / centered / adjoint-product heap
+  // allocations that dominated the profile. Cov is computed from the
+  // raw second moments via cov_ij = (sum p_i p_j - N * mean_i * mean_j) / (N - 1).
+  const size_t n = ground.size();
+  double sx = 0.0, sy = 0.0, sz = 0.0;
+  double sxx = 0.0, syy = 0.0, szz = 0.0;
+  double sxy = 0.0, sxz = 0.0, syz = 0.0;
+  for (const auto &p : ground) {
+    const double x = p.x, y = p.y, z = p.z;
+    sx += x;
+    sy += y;
+    sz += z;
+    sxx += x * x;
+    syy += y * y;
+    szz += z * z;
+    sxy += x * y;
+    sxz += x * z;
+    syz += y * z;
   }
-  Eigen::MatrixX3f centered = eigen_ground.rowwise() - eigen_ground.colwise().mean();
-  Eigen::MatrixX3f cov =
-      (centered.adjoint() * centered) / static_cast<double>(eigen_ground.rows() - 1);
+  const double inv_n = 1.0 / static_cast<double>(n);
+  const double mx = sx * inv_n, my = sy * inv_n, mz = sz * inv_n;
+  const double denom = (n > 1) ? static_cast<double>(n - 1) : 1.0;
+  const double inv_d = 1.0 / denom;
 
-  pc_mean_.resize(3);
-  pc_mean_ << eigen_ground.colwise().mean()(0), eigen_ground.colwise().mean()(1),
-      eigen_ground.colwise().mean()(2);
+  Eigen::Matrix3f cov;
+  cov(0, 0) = static_cast<float>((sxx - n * mx * mx) * inv_d);
+  cov(1, 1) = static_cast<float>((syy - n * my * my) * inv_d);
+  cov(2, 2) = static_cast<float>((szz - n * mz * mz) * inv_d);
+  cov(0, 1) = cov(1, 0) = static_cast<float>((sxy - n * mx * my) * inv_d);
+  cov(0, 2) = cov(2, 0) = static_cast<float>((sxz - n * mx * mz) * inv_d);
+  cov(1, 2) = cov(2, 1) = static_cast<float>((syz - n * my * mz) * inv_d);
 
-  Eigen::JacobiSVD<Eigen::MatrixX3f> svd(cov, Eigen::DecompositionOptions::ComputeFullU);
-  singular_values_ = svd.singularValues();
+  pc_mean_ << static_cast<float>(mx), static_cast<float>(my), static_cast<float>(mz);
 
-  // use the least singular vector as normal
-  normal_ = (svd.matrixU().col(2));
+  // Closed-form 3x3 symmetric eigendecomposition. Covariance is PSD,
+  // so eigenvalues == singular values; SelfAdjointEigenSolver returns
+  // them ascending. col(0) is the plane normal direction (smallest
+  // variance); singular_values_ is repacked in descending order so the
+  // downstream consumers in estimateGround (line_variable =
+  // singular_values_(0)/singular_values_(1), ground_flatness =
+  // singular_values_.minCoeff()) keep the same semantics as the old
+  // JacobiSVD output.
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eig;
+  eig.computeDirect(cov, Eigen::ComputeEigenvectors);
+  const Eigen::Vector3f evals = eig.eigenvalues().cwiseMax(0.0f);
 
-  if (normal_(2) < 0) {
-    for (int i = 0; i < 3; i++) normal_(i) *= -1;
-  }
+  normal_ = eig.eigenvectors().col(0);
+  if (normal_(2) < 0.0f) normal_ = -normal_;
 
-  // mean ground seeds value
-  Eigen::Vector3f seeds_mean = pc_mean_.head<3>();
+  singular_values_ << evals(2), evals(1), evals(0);
 
   // according to normal.T*[x,y,z] = -d
-  d_ = -(normal_.transpose() * seeds_mean)(0, 0);
+  d_ = -normal_.dot(pc_mean_);
 }
 
 void PatchWorkpp::extract_initial_seeds(const int zone_idx,
@@ -201,7 +227,7 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
   // benefit from TBB because it has no R-VPF and fewer allocations
   // per patch.
   for (int zone_idx = 0; zone_idx < params_.num_zones; ++zone_idx) {
-    auto zone = ConcentricZoneModel_[zone_idx];
+    auto &zone = ConcentricZoneModel_[zone_idx];
 
     for (int ring_idx = 0; ring_idx < params_.num_rings_each_zone[zone_idx]; ++ring_idx) {
       const int num_sectors = params_.num_sectors_each_zone[zone_idx];
@@ -275,7 +301,7 @@ void PatchWorkpp::estimateGround(Eigen::MatrixXf cloud_in) {
         if (params_.enable_TGR) {
           temporal_ground_revert(ringwise_flatness, candidates, concentric_idx);
         } else {
-          for (auto candidate : candidates) {
+          for (auto &candidate : candidates) {
             addCloud(cloud_nonground_, candidate.regionwise_ground);
           }
         }
@@ -391,8 +417,8 @@ void PatchWorkpp::reflected_noise_removal(Eigen::MatrixXf &cloud_in) {
     cout << "PatchWorkpp::reflected_noise_removal() - Number of Noises : " << cnt << endl;
 }
 
-void PatchWorkpp::temporal_ground_revert(std::vector<double> ring_flatness,
-                                         std::vector<patchwork::RevertCandidate> candidates,
+void PatchWorkpp::temporal_ground_revert(const std::vector<double> &ring_flatness,
+                                         const std::vector<patchwork::RevertCandidate> &candidates,
                                          int concentric_idx) {
   if (params_.verbose)
     std::cout << "\033[1;34m"
@@ -408,7 +434,7 @@ void PatchWorkpp::temporal_ground_revert(std::vector<double> ring_flatness,
          << std::endl;
   }
 
-  for (auto candidate : candidates) {
+  for (const auto &candidate : candidates) {
     // Debug
     if (params_.verbose) {
       cout << "\033[1;33m" << candidate.sector_idx << "th flat_sector_candidate"
@@ -470,26 +496,29 @@ void PatchWorkpp::extract_piecewiseground(const int zone_idx,
 
   // 1. Region-wise Vertical Plane Fitting (R-VPF)
   // : removes potential vertical plane under the ground plane
-  vector<PointXYZ> src_wo_verticals;
-  src_wo_verticals = src;
+  // src_wo_verticals_ and src_tmp_ are reused instance scratch buffers
+  // (see header) — `clear()` keeps capacity, so the per-patch malloc
+  // pressure on the glibc heap goes away after the first few patches.
+  src_wo_verticals_.clear();
+  src_wo_verticals_.insert(src_wo_verticals_.end(), src.begin(), src.end());
 
   if (params_.enable_RVPF) {
     for (int i = 0; i < params_.num_iter; i++) {
-      extract_initial_seeds(zone_idx, src_wo_verticals, ground_pc_, params_.th_seeds_v);
+      extract_initial_seeds(zone_idx, src_wo_verticals_, ground_pc_, params_.th_seeds_v);
       estimate_plane(ground_pc_);
 
       if (zone_idx == 0 && normal_(2) < params_.uprightness_thr) {
-        vector<PointXYZ> src_tmp;
-        src_tmp = src_wo_verticals;
-        src_wo_verticals.clear();
+        src_tmp_.clear();
+        src_tmp_.swap(src_wo_verticals_);  // src_tmp_ now holds the old src_wo_verticals_;
+                                           // src_wo_verticals_ is empty (capacity retained).
 
-        for (auto point : src_tmp) {
+        for (const auto &point : src_tmp_) {
           double distance = calc_point_to_plane_d(point, normal_, d_);
 
           if (abs(distance) < params_.th_dist_v) {
             non_ground_dst.push_back(point);
           } else {
-            src_wo_verticals.push_back(point);
+            src_wo_verticals_.push_back(point);
           }
         }
       } else
@@ -500,13 +529,13 @@ void PatchWorkpp::extract_piecewiseground(const int zone_idx,
   // 2. Region-wise Ground Plane Fitting (R-GPF)
   // : fits the ground plane
 
-  extract_initial_seeds(zone_idx, src_wo_verticals, ground_pc_);
+  extract_initial_seeds(zone_idx, src_wo_verticals_, ground_pc_);
   estimate_plane(ground_pc_);
 
   for (int i = 0; i < params_.num_iter; i++) {
     ground_pc_.clear();
 
-    for (auto point : src_wo_verticals) {
+    for (const auto &point : src_wo_verticals_) {
       double distance = calc_point_to_plane_d(point, normal_, d_);
 
       if (i < params_.num_iter - 1) {
@@ -538,11 +567,13 @@ void PatchWorkpp::extract_piecewiseground(const int zone_idx,
   }
 }
 
-double PatchWorkpp::calc_point_to_plane_d(PointXYZ p, Eigen::VectorXf normal, double d) {
+double PatchWorkpp::calc_point_to_plane_d(const PointXYZ &p,
+                                          const Eigen::VectorXf &normal,
+                                          double d) {
   return normal(0) * p.x + normal(1) * p.y + normal(2) * p.z + d;
 }
 
-void PatchWorkpp::calc_mean_stdev(std::vector<double> vec, double &mean, double &stdev) {
+void PatchWorkpp::calc_mean_stdev(const std::vector<double> &vec, double &mean, double &stdev) {
   if (vec.size() <= 1) return;
 
   mean = std::accumulate(vec.begin(), vec.end(), 0.0) / vec.size();

@@ -195,6 +195,13 @@ class PatchWorkpp {
   vector<PointXYZ> ground_pc_, non_ground_pc_;
   vector<PointXYZ> regionwise_ground_, regionwise_nonground_;
 
+  // Reused scratch buffers for R-VPF / R-GPF inside extract_piecewiseground.
+  // Promoting these to members avoids per-patch heap (de)allocation, which
+  // dominated the per-frame profile (~14 µs avg patch, hundreds of patches
+  // per cloud) — see issue #96.
+  vector<PointXYZ> src_wo_verticals_;
+  vector<PointXYZ> src_tmp_;
+
   vector<PointXYZ> cloud_ground_, cloud_nonground_;
 
   vector<PointXYZ> centers_, normals_;
@@ -202,7 +209,7 @@ class PatchWorkpp {
   Eigen::MatrixX3f toEigenCloud(const vector<PointXYZ> &cloud);
   Eigen::VectorXi toIndices(const vector<PointXYZ> &cloud);
 
-  void addCloud(vector<PointXYZ> &cloud, vector<PointXYZ> &add);
+  void addCloud(vector<PointXYZ> &cloud, const vector<PointXYZ> &add);
 
   void flush_patches(std::vector<Zone> &czm);
 
@@ -210,12 +217,12 @@ class PatchWorkpp {
 
   void reflected_noise_removal(Eigen::MatrixXf &cloud_in);
 
-  void temporal_ground_revert(std::vector<double> ring_flatness,
-                              std::vector<patchwork::RevertCandidate> candidates,
+  void temporal_ground_revert(const std::vector<double> &ring_flatness,
+                              const std::vector<patchwork::RevertCandidate> &candidates,
                               int concentric_idx);
 
-  double calc_point_to_plane_d(PointXYZ p, Eigen::VectorXf normal, double d);
-  void calc_mean_stdev(std::vector<double> vec, double &mean, double &stdev);
+  double calc_point_to_plane_d(const PointXYZ &p, const Eigen::VectorXf &normal, double d);
+  void calc_mean_stdev(const std::vector<double> &vec, double &mean, double &stdev);
 
   void update_elevation_thr();
   void update_flatness_thr();
