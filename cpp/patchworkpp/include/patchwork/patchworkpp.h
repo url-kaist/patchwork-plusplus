@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <numeric>
+#include <stdexcept>
 #include <vector>
 
 #include <Eigen/Dense>
@@ -126,6 +127,17 @@ class PatchWorkpp {
   typedef std::vector<Ring> Zone;
 
   PatchWorkpp(patchwork::Params _params) : params_(_params) {
+    const int total_rings =
+        std::accumulate(params_.num_rings_each_zone.begin(), params_.num_rings_each_zone.end(), 0);
+    if (params_.num_rings_of_interest < 0 || params_.num_rings_of_interest > total_rings) {
+      throw std::invalid_argument(
+          "num_rings_of_interest must be between 0 and the total ring count");
+    }
+    // Adaptive thresholds and histories need one entry per checked ring.
+    params_.elevation_thr.resize(params_.num_rings_of_interest, 0.0);
+    params_.flatness_thr.resize(params_.num_rings_of_interest, 0.0);
+    update_elevation_.resize(params_.num_rings_of_interest);
+    update_flatness_.resize(params_.num_rings_of_interest);
     double min_range_z2_ = (7 * params_.min_range + params_.max_range) / 8.0;
     double min_range_z3_ = (3 * params_.min_range + params_.max_range) / 4.0;
     double min_range_z4_ = (params_.min_range + params_.max_range) / 2.0;
@@ -176,8 +188,8 @@ class PatchWorkpp {
   time_t timer_;
   long time_taken_;
 
-  std::vector<double> update_flatness_[4];
-  std::vector<double> update_elevation_[4];
+  std::vector<std::vector<double>> update_flatness_;
+  std::vector<std::vector<double>> update_elevation_;
 
   double d_;
 
